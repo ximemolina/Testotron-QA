@@ -1,0 +1,201 @@
+<div class="container-fluid py-4">
+  <header class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h3 fw-bold mb-1">Detalle del intento</h1>
+      <p class="text-muted mb-0 small">{{quizTitle}}</p>
+    </div>
+    <a href="/teacher/results" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver a resultados
+    </a>
+  </header>
+
+  <!-- Información del estudiante y resultado -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <section class="card border-0 shadow-sm h-100" aria-labelledby="student-info-title">
+        <div class="card-body">
+          <h2 id="student-info-title" class="h6 fw-semibold mb-3">Estudiante</h2>
+          <dl class="row small mb-0">
+            <dt class="col-sm-4">Nombre</dt>
+            <dd class="col-sm-8">{{student.name}}</dd>
+            <dt class="col-sm-4">Email</dt>
+            <dd class="col-sm-8">{{student.email}}</dd>
+            <dt class="col-sm-4">Cuestionario</dt>
+            <dd class="col-sm-8">{{quizTitle}}</dd>
+            <dt class="col-sm-4">Entregado</dt>
+            <dd class="col-sm-8">{{submittedAt}}</dd>
+          </dl>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-md-6">
+      <section class="card border-0 shadow-sm h-100" aria-labelledby="score-summary-title">
+        <div class="card-body text-center d-flex flex-column justify-content-center">
+          <h2 id="score-summary-title" class="h6 fw-semibold mb-3">Calificación</h2>
+          <p class="display-5 fw-bold mb-1" id="total-score-display" aria-live="polite" aria-label="Puntuación total">
+            {{score}}<span class="fs-4 text-muted">/{{maxScore}}</span>
+          </p>
+          <p class="h5 text-muted mb-3" id="percentage-display">{{percentage}}%</p>
+          {{#if isGraded}}
+            {{#if passed}}
+              <span class="badge bg-success fs-6 px-3 py-2" role="status">Aprobado</span>
+            {{else}}
+              <span class="badge bg-danger fs-6 px-3 py-2" role="status">Reprobado</span>
+            {{/if}}
+          {{else}}
+            <span class="badge bg-warning text-dark fs-6 px-3 py-2" role="status">{{statusLabel}}</span>
+          {{/if}}
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Formulario de calificación por pregunta -->
+  <section class="card border-0 shadow-sm" aria-labelledby="grading-title">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 id="grading-title" class="h6 fw-semibold mb-0">
+          Respuestas y calificación
+          <span class="badge bg-secondary ms-1" aria-label="{{answers.length}} respuestas">{{answers.length}}</span>
+        </h2>
+        <div class="d-flex gap-2 align-items-center">
+          <span id="save-status" class="text-muted small" aria-live="polite" aria-atomic="true"></span>
+          <button type="button" id="save-grades-btn" class="btn btn-success btn-sm">
+            <i class="bi bi-floppy me-1" aria-hidden="true"></i> Guardar calificación
+          </button>
+        </div>
+      </div>
+
+      {{#if answers.length}}
+        <div class="table-responsive">
+          <table class="table align-middle mb-0" aria-label="Calificación por pregunta">
+            <thead class="table-light">
+              <tr>
+                <th scope="col" style="width:50%">Pregunta</th>
+                <th scope="col">Respuesta del estudiante</th>
+                <th scope="col" style="width:130px">Pts obtenidos</th>
+                <th scope="col" style="width:140px">Retroalimentación</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each answers}}
+                <tr>
+                  <td>
+                    <p class="fw-medium mb-0 small">{{question}}</p>
+                    <small class="text-muted">Máximo: {{pts}} pt{{#if (eq pts 1)}}{{else}}s{{/if}}</small>
+                  </td>
+                  <td class="small text-muted">
+                    {{#if response}}{{response}}{{else}}<em>Sin respuesta</em>{{/if}}
+                  </td>
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm answer-pts"
+                      min="0"
+                      max="{{pts}}"
+                      step="0.5"
+                      value="{{pts_obtained}}"
+                      data-tq-id="{{test_question_id}}"
+                      data-max="{{pts}}"
+                      aria-label="Puntos para: {{question}}"
+                    >
+                  </td>
+                  <td>
+                    <input
+                      type="text"
+                      class="form-control form-control-sm answer-feedback"
+                      value="{{feedback}}"
+                      data-tq-id="{{test_question_id}}"
+                      placeholder="Opcional"
+                      aria-label="Retroalimentación para: {{question}}"
+                      maxlength="500"
+                    >
+                  </td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      {{else}}
+        <p class="text-muted mb-0">Este intento no tiene respuestas registradas.</p>
+      {{/if}}
+    </div>
+  </section>
+</div>
+
+<script>
+(function() {
+  const attemptId = {{attempt.id}};
+  const maxScore = {{maxScore}};
+  const minScore = {{minScore}};
+  const scoreDisplay = document.getElementById('total-score-display');
+  const pctDisplay = document.getElementById('percentage-display');
+  const saveBtn = document.getElementById('save-grades-btn');
+  const saveStatus = document.getElementById('save-status');
+  const badgeEl = document.querySelector('[role="status"]');
+
+  function recalcTotal() {
+    let total = 0;
+    document.querySelectorAll('.answer-pts').forEach(inp => {
+      const v = parseFloat(inp.value) || 0;
+      const max = parseFloat(inp.dataset.max) || 0;
+      total += Math.min(v, max);
+    });
+    total = Math.round(total * 10) / 10;
+    if (scoreDisplay) scoreDisplay.innerHTML = `${total}<span class="fs-4 text-muted">/${maxScore}</span>`;
+    const pct = maxScore > 0 ? Math.round((total / maxScore) * 100) : 0;
+    if (pctDisplay) pctDisplay.textContent = pct + '%';
+    return { total, pct };
+  }
+
+  function updateBadge(pct) {
+    if (!badgeEl) return;
+    const passed = pct >= minScore;
+    badgeEl.className = `badge fs-6 px-3 py-2 ${passed ? 'bg-success' : 'bg-danger'}`;
+    badgeEl.textContent = passed ? 'Aprobado' : 'Reprobado';
+  }
+
+  document.querySelectorAll('.answer-pts').forEach(inp => {
+    inp.addEventListener('input', recalcTotal);
+  });
+
+  if (saveBtn) {
+    saveBtn.addEventListener('click', async () => {
+      saveBtn.disabled = true;
+      saveStatus.textContent = 'Guardando...';
+
+      const answers = [];
+      document.querySelectorAll('.answer-pts').forEach(inp => {
+        const feedbackEl = document.querySelector(`.answer-feedback[data-tq-id="${inp.dataset.tqId}"]`);
+        answers.push({
+          test_question_id: Number(inp.dataset.tqId),
+          pts_obtained: Math.min(parseFloat(inp.value) || 0, parseFloat(inp.dataset.max) || 0),
+          feedback: feedbackEl ? feedbackEl.value.trim() : null
+        });
+      });
+
+      try {
+        const res = await fetch(`/api/attempts/${attemptId}/grade`, {
+          method: 'PATCH',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ answers })
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err.error || 'Error al guardar');
+        }
+        const { pct } = recalcTotal();
+        updateBadge(pct);
+        saveStatus.textContent = '✓ Calificación guardada correctamente';
+        setTimeout(() => { saveStatus.textContent = ''; }, 3000);
+      } catch (e) {
+        saveStatus.textContent = 'Error: ' + e.message;
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+  }
+})();
+</script>

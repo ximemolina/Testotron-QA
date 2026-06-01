@@ -1,0 +1,198 @@
+<!-- Cabecera de la Página -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold text-dark mb-1">Mis cuestionarios</h1>
+        <p class="text-muted mb-0">Gestiona y organiza todos tus cuestionarios</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/teacher/questions" class="btn btn-outline-secondary">Banco de preguntas</a>
+	<a href="/teacher/templates" class="btn btn-outline-secondary">Plantillas</a>
+        <a href="/teacher/quizzes/create" class="btn bg-primary text-white d-flex align-items-center">
+            <i class="bi bi-plus-lg me-2" aria-hidden="true"></i> Crear cuestionario
+        </a>
+    </div>
+</div>
+
+<!-- Barra de búsqueda -->
+<div class="row mb-4 g-2">
+    <div class="col-md-5">
+        <div class="input-group">
+            <span class="input-group-text bg-white border-end-0">
+                <i class="bi bi-search text-muted"></i>
+            </span>
+            <input type="search" id="quizSearch" class="form-control border-start-0" placeholder="Buscar por nombre..." aria-label="Buscar cuestionarios">
+        </div>
+    </div>
+    <div class="col-md-3">
+        <select id="quizStatusFilter" class="form-select" aria-label="Filtrar por estado">
+            <option value="">Todos los estados</option>
+            <option value="published">Publicado</option>
+            <option value="draft">Borrador</option>
+            <option value="closed">Cerrado</option>
+        </select>
+    </div>
+    <div class="col-md-4">
+        <input type="search" id="quizGroupFilter" class="form-control" placeholder="Filtrar por grupo..." aria-label="Filtrar por grupo">
+    </div>
+</div>
+
+<!-- Estadísticas (Accesibilidad: role="region") -->
+<section class="row mb-4 g-3" role="region" aria-label="Estadísticas de cuestionarios">
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body p-2 border-start border-4 border-primary rounded">
+                <p class="text-muted small mb-1">Total</p>
+                <p class="h3 fw-bold text-primary mb-0">{{stats.totalQuizzes}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body p-2 border-start border-4 border-primary rounded">
+                <p class="text-muted small mb-1">Publicados</p>
+                <p class="h3 fw-bold text-primary mb-0">{{stats.published}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body p-2 border-start border-4 border-primary rounded">
+                <p class="text-muted small mb-1">Borradores</p>
+                <p class="h3 fw-bold text-primary mb-0">{{stats.drafts}}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body p-2 border-start border-4 border-primary rounded">
+                <p class="text-muted small mb-1">Respuestas totales</p>
+                <p class="h3 fw-bold text-primary mb-0">{{stats.totalResponses}}</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Tabla de Cuestionarios -->
+<div class="card shadow-sm border-0 mb-5">
+    <div class="table-responsive">
+        <table class="table table-hover table-striped align-middle mb-0" aria-label="Lista de cuestionarios">
+            <thead class="table-light text-uppercase small text-muted">
+                <tr>
+                    <th scope="col" class="ps-4">Cuestionario</th>
+                    <th scope="col">Grupo</th>
+                    <th scope="col">Preguntas</th>
+                    <th scope="col">Respuestas</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Código</th>
+<th
+  scope="col"
+  class="text-end pe-4"
+  style="width: 260px;"
+>
+  Acciones
+</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each quizzes}}
+                <tr data-status="{{this.status}}" data-group="{{this.group}}" data-title="{{this.title}}">
+                    <td class="ps-4 py-3">
+                        <p class="fw-bold mb-0 text-capitalize">{{this.title}}</p>
+                        <p class="small text-muted mb-0">Creado: {{this.created_at}}</p>
+                    </td>
+                    <td class="text-capitalize">{{this.group}}</td>
+                    <td>{{this.questions}}</td>
+                    <td>{{this.responses}}</td>
+                    <td>
+                        {{#if (eq this.status 'published')}}
+                            <span class="badge bg-success-subtle text-success border border-success rounded-pill">Publicado</span>
+                        {{else if (eq this.status 'closed')}}
+                            <span class="badge bg-danger-subtle text-danger border border-danger rounded-pill">Cerrado</span>
+                        {{else}}
+                            <span class="badge bg-warning-subtle text-warning border border-warning rounded-pill">Borrador</span>
+                        {{/if}}
+                    </td>
+                    <td class="font-monospace fw-bold">{{this.code}}</td>
+                    <td class="pe-4 text-end" style="min-width: 220px;">
+                        {{> quiz-actions this}}
+                    </td>
+                </tr>
+                {{else}}
+                <tr>
+                    <td colspan="7" class="text-center py-5 text-muted">
+                        <i class="bi bi-folder-x h3 d-block mb-3"></i>
+                        Aún no has creado ningún cuestionario.
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+document.querySelectorAll('.delete-quiz-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const code = btn.dataset.code;
+    if (!confirm('¿Eliminar cuestionario? Esta acción no se puede deshacer.')) return;
+    const res = await fetch(`/api/tests/${code}`, { method: 'DELETE' });
+    if (!res.ok) { alert('No se pudo eliminar'); return; }
+    location.reload();
+  });
+});
+
+document.querySelectorAll('.duplicate-quiz-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const code = btn.dataset.code;
+    btn.disabled = true;
+    const res = await fetch(`/api/tests/${code}/duplicate`, { method: 'POST' });
+    btn.disabled = false;
+    if (!res.ok) { alert('No se pudo duplicar'); return; }
+    const data = await res.json();
+    alert('Cuestionario duplicado. Nuevo código: ' + data.code);
+    location.reload();
+  });
+});
+
+document.querySelectorAll('.share-quiz-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const code = btn.dataset.code;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(code).then(() => {
+        btn.title = '¡Copiado!';
+        setTimeout(() => { btn.title = 'Compartir'; }, 2000);
+      });
+    } else {
+      prompt('Copia este código y compártelo con tus estudiantes:', code);
+    }
+  });
+});
+
+// Client-side filters using data attributes for reliable matching
+(function() {
+  const searchInput = document.getElementById('quizSearch');
+  const statusFilter = document.getElementById('quizStatusFilter');
+  const groupFilter = document.getElementById('quizGroupFilter');
+  if (!searchInput) return;
+
+  function filterRows() {
+    const term = searchInput.value.toLowerCase().trim();
+    const status = statusFilter.value; // raw DB value: published/draft/closed
+    const group = groupFilter.value.toLowerCase().trim();
+
+    document.querySelectorAll('tbody tr[data-status]').forEach(row => {
+      const rowTitle = (row.dataset.title || '').toLowerCase();
+      const rowStatus = row.dataset.status || '';
+      const rowGroup = (row.dataset.group || '').toLowerCase();
+
+      const matchTerm = !term || rowTitle.includes(term);
+      const matchStatus = !status || rowStatus === status;
+      const matchGroup = !group || rowGroup.includes(group);
+      row.hidden = !(matchTerm && matchStatus && matchGroup);
+    });
+  }
+
+  searchInput.addEventListener('input', filterRows);
+  statusFilter.addEventListener('change', filterRows);
+  groupFilter.addEventListener('input', filterRows);
+})();
+</script>

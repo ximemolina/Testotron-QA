@@ -1,0 +1,80 @@
+<main id="main-content" class="container-fluid py-4" role="main">
+  <header class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h3 fw-bold mb-1">{{pageTitle}}</h1>
+      <p class="text-muted mb-0">Modifica los datos de la plantilla</p>
+    </div>
+    <a href="/teacher/templates" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver
+    </a>
+  </header>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <form id="templateForm">
+        <div class="mb-3">
+          <label for="templateTitle" class="form-label">Título <span class="text-danger">*</span></label>
+          <input type="text" id="templateTitle" class="form-control" value="{{template.title}}" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="templateDescription" class="form-label">Descripción</label>
+          <textarea id="templateDescription" class="form-control" rows="3">{{template.description}}</textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="templateInstructions" class="form-label">Instrucciones</label>
+          <textarea id="templateInstructions" class="form-control" rows="3">{{template.instructions}}</textarea>
+        </div>
+
+        <div class="mb-4">
+          <label for="templateTime" class="form-label">Tiempo límite (minutos)</label>
+          <input type="number" id="templateTime" class="form-control" style="max-width:200px"
+            value="{{template.time_limit_minutes}}" min="0">
+        </div>
+
+        {{#if template.questions.length}}
+          <h2 class="h6 fw-semibold mb-3">Preguntas incluidas</h2>
+          <ul class="list-group mb-4">
+            {{#each template.questions}}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>{{question}}</span>
+                <span class="badge bg-secondary">{{type}}</span>
+              </li>
+            {{/each}}
+          </ul>
+        {{/if}}
+
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn text-white" style="background-color:var(--color-primary);">
+            <i class="bi bi-save me-1" aria-hidden="true"></i> Guardar cambios
+          </button>
+          <a href="/teacher/templates" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+<script>
+document.getElementById('templateForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const payload = {
+    title: document.getElementById('templateTitle').value.trim(),
+    description: document.getElementById('templateDescription').value.trim(),
+    instructions: document.getElementById('templateInstructions').value.trim(),
+    time_limit_minutes: Number(document.getElementById('templateTime').value) || null
+  };
+  const res = await fetch('/api/templates/{{template.id}}', {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+  if (res.ok) {
+    window.location.href = '/teacher/templates';
+  } else {
+    const data = await res.json();
+    alert(data.error || 'No se pudo guardar');
+  }
+});
+</script>

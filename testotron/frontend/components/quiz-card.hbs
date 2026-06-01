@@ -1,0 +1,89 @@
+<div class="col-12 col-md-6 quiz-item" data-title="{{title}}" data-group="{{group}}" data-status="{{status}}" data-completed="{{isCompleted}}">
+  <article class="card border-0 shadow-sm h-100">
+    <div class="card-body d-flex flex-column justify-content-between">
+      <header class="mb-3">
+        <div class="d-flex justify-content-between align-items-start mb-1">
+          <h2 class="h5 fw-bold mb-0">{{title}}</h2>
+          <div class="d-flex gap-1 ms-2 flex-shrink-0 flex-wrap justify-content-end">
+            {{#if isGraded}}
+              <span class="badge bg-success">Calificado</span>
+            {{else if isPending}}
+              <span class="badge bg-warning text-dark">Pendiente</span>
+            {{else if isInProgress}}
+              <span class="badge bg-info text-dark">En progreso</span>
+            {{/if}}
+            {{#if isClosed}}
+              <span class="badge bg-secondary">Cerrado</span>
+            {{/if}}
+          </div>
+        </div>
+        <p class="text-muted small mb-0">
+          <i class="bi bi-people me-1" aria-hidden="true"></i>{{group}}
+        </p>
+      </header>
+
+      <ul class="list-unstyled small mb-3">
+        <li class="mb-1">
+          <i class="bi bi-question-circle text-muted me-1"></i>
+          <strong>Preguntas:</strong> {{questions}}
+        </li>
+        {{#if timeLimit}}
+          <li class="mb-1">
+            <i class="bi bi-clock text-muted me-1"></i>
+            <strong>Tiempo:</strong> {{timeLimit}} min
+          </li>
+        {{/if}}
+        {{#if dueDate}}
+          <li class="mb-1">
+            <i class="bi bi-calendar-event text-muted me-1"></i>
+            <strong>Fecha límite:</strong> {{dueDate}}
+          </li>
+        {{/if}}
+        {{#if isGraded}}
+          <li class="mb-1">
+            <i class="bi bi-trophy text-muted me-1"></i>
+            <strong>Puntuación:</strong> {{score}}
+          </li>
+        {{else if isPending}}
+          <li class="text-warning">
+            <i class="bi bi-hourglass-split me-1"></i>
+            Esperando calificación
+          </li>
+        {{/if}}
+      </ul>
+
+      <div class="d-flex gap-2 flex-wrap">
+        {{#if isClosed}}
+          {{#if attemptId}}
+            <a href="/student/result/{{attemptId}}" class="btn btn-outline-primary btn-sm flex-fill">
+              <i class="bi bi-eye me-1"></i> Ver resultado
+            </a>
+          {{else}}
+            <span class="text-muted small align-self-center">Sin intentos registrados.</span>
+          {{/if}}
+        {{else if isGraded}}
+          <a href="/student/result/{{attemptId}}" class="btn btn-outline-success btn-sm flex-fill">
+            <i class="bi bi-eye me-1"></i> Ver resultado
+          </a>
+          {{#if canRetry}}
+            <a href="/student/quiz/{{code}}" class="btn btn-primary btn-sm flex-fill">
+              <i class="bi bi-arrow-repeat me-1"></i> Reintentar
+            </a>
+          {{/if}}
+        {{else if isPending}}
+          <a href="/student/result/{{attemptId}}" class="btn btn-outline-secondary btn-sm flex-fill">
+            <i class="bi bi-hourglass-split me-1"></i> Ver estado
+          </a>
+        {{else if isInProgress}}
+          <a href="/student/quiz/{{code}}" class="btn btn-warning btn-sm flex-fill">
+            <i class="bi bi-play-fill me-1"></i> Continuar
+          </a>
+        {{else}}
+          <a href="/student/quiz/{{code}}" class="btn btn-primary btn-sm flex-fill">
+            <i class="bi bi-play-fill me-1"></i> Comenzar
+          </a>
+        {{/if}}
+      </div>
+    </div>
+  </article>
+</div>

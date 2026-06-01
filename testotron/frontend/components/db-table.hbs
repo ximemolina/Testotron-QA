@@ -1,0 +1,33 @@
+<table class="table table-striped table-hover">
+  <thead>
+    <tr>
+      {{#each headers}}
+        <th>{{this}}</th>
+      {{/each}}
+
+      {{#if actions}}
+        <th>Acciones</th>
+      {{/if}}
+    </tr>
+  </thead>
+
+  <tbody>
+    {{#each rows}}
+      <tr>
+        {{#each this}}
+          <td>{{this}}</td>
+        {{/each}}
+
+        {{#if ../actions}}
+          <td class="text-nowrap">
+            {{#each ../actions}}
+              <a href="{{this.url}}" class="btn btn-sm btn-{{this.color}}" aria-label="{{this.label}}">
+                <i class="bi {{this.icon}}"></i> {{this.label}}
+              </a>
+            {{/each}}
+          </td>
+        {{/if}}
+      </tr>
+    {{/each}}
+  </tbody>
+</table>

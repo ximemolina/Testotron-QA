@@ -1,0 +1,86 @@
+<main
+  id="main-content"
+  class="container-fluid"
+  role="main"
+>
+  <header class="mb-4">
+    <h1 class="h3 fw-bold mb-1">
+      {{pageTitle}}
+    </h1>
+
+    <p class="text-muted mb-0">
+      {{pageDescription}}
+    </p>
+  </header>
+
+  <section
+    aria-label="Listado de plantillas"
+  >
+    <div class="row g-4">
+      {{#each templates}}
+        <div class="col-12 col-md-6 col-xl-4">
+          {{> template-card}}
+        </div>
+      {{/each}}
+    </div>
+  </section>
+
+<script>
+
+document
+  .querySelectorAll(
+    '.delete-template-btn'
+  )
+  .forEach(btn => {
+
+    btn.addEventListener(
+      'click',
+      async () => {
+
+        const id =
+          btn.dataset.id;
+
+        const ok = confirm(
+          '¿Eliminar plantilla?'
+        );
+
+        if (!ok) {
+          return;
+        }
+
+        try {
+
+          const res =
+            await fetch(
+              `/api/templates/${id}`,
+              {
+                method: 'DELETE'
+              }
+            );
+
+          if (!res.ok) {
+
+            alert(
+              'No se pudo eliminar'
+            );
+
+            return;
+          }
+
+          location.reload();
+
+        } catch (err) {
+
+          console.error(err);
+
+          alert(
+            'Error eliminando'
+          );
+        }
+      }
+    );
+  });
+
+</script>
+
+</main>

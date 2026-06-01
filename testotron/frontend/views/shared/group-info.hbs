@@ -1,0 +1,392 @@
+<main id="main-content" class="container-fluid py-4" role="main">
+  <header class="mb-4">
+    <h1 class="h3 fw-bold">{{group.name}}</h1>
+    <p class="text-muted">Código de acceso: {{group.code}}</p>
+    <p class="text-muted mb-0"> {{group.description}} </p>
+  </header>
+
+{{#ifEquals user.role "teacher"}}
+
+<div class="mb-4">
+
+  <button
+    class="btn btn-outline-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#editGroupModal"
+  >
+    <i class="bi bi-pencil-square me-1"></i>
+    Editar grupo
+  </button>
+
+</div>
+
+{{/ifEquals}}
+
+{{#ifEquals user.role "admin"}}
+
+<div class="mb-4">
+
+  <button
+    class="btn btn-outline-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#editGroupModal"
+  >
+    <i class="bi bi-pencil-square me-1"></i>
+    Editar grupo
+  </button>
+
+</div>
+
+{{/ifEquals}}
+
+  <!-- Estadísticas -->
+  <section class="row g-4 mb-4" aria-label="Estadísticas del grupo">
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Miembros</p>
+          <p class="h3 fw-bold mb-0">{{group.membersCount}}</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Cuestionarios</p>
+          <p class="h3 fw-bold mb-0">{{group.quizzesCount}}</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Promedio general</p>
+          <p class="h3 fw-bold mb-0">{{group.averageScore}}%</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Código de acceso</p>
+          <p class="h3 fw-bold mb-0">{{group.code}}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Miembros -->
+  <section class="card border-0 shadow-sm mb-4" aria-label="Miembros del grupo">
+	  
+	<div class="card-header d-flex justify-content-between align-items-center">
+  <h2 class="h5 mb-0">Miembros</h2>
+
+  {{#ifEquals user.role "teacher"}}
+    <button
+      class="btn btn-sm btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#addUserModal"
+    >
+      <i class="bi bi-plus-lg me-1"></i>
+      Incluir usuario
+    </button>
+  {{/ifEquals}}
+
+  {{#ifEquals user.role "admin"}}
+    <button
+      class="btn btn-sm btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#addUserModal"
+    >
+      <i class="bi bi-plus-lg me-1"></i>
+      Incluir usuario
+    </button>
+  {{/ifEquals}}
+	</div>
+
+<div
+  class="modal fade"
+  id="addUserModal"
+  tabindex="-1"
+  aria-labelledby="addUserModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="addUserModalLabel">
+          Agregar usuario al grupo
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <form
+        action="/api/groups/{{group.code}}/add-user"
+        method="POST"
+      >
+        <div class="modal-body">
+
+          <div class="mb-3">
+            <label class="form-label">
+              Correo electrónico
+            </label>
+
+            <input
+              type="email"
+              name="email"
+              class="form-control"
+              placeholder="usuario@email.com"
+              required
+            >
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            Agregar usuario
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<div class="card-body" style="max-height: 300px; overflow-y: auto;">
+      <ul class="list-group list-group-flush">
+        {{#each group.members}}
+
+<li class="list-group-item d-flex justify-content-between align-items-center">
+
+  <div>
+    <strong>{{name}}</strong>
+    <br>
+    <span class="text-muted small">
+      {{email}}
+    </span>
+  </div>
+
+  <div class="d-flex align-items-center gap-2">
+
+    <span class="badge bg-primary">
+      {{role}}
+    </span>
+
+    {{#ifEquals ../user.role "teacher"}}
+
+    <form
+      action="/api/groups/{{../group.code}}/members/remove"
+      method="POST"
+      onsubmit="return confirm('¿Eliminar usuario del grupo?')"
+    >
+
+      <input
+        type="hidden"
+        name="user_id"
+        value="{{id}}"
+      >
+
+      <button
+        type="submit"
+        class="btn btn-sm btn-outline-danger"
+      >
+        <i class="bi bi-trash"></i>
+      </button>
+
+    </form>
+
+    {{/ifEquals}}
+
+    {{#ifEquals ../user.role "admin"}}
+
+    <form
+      action="/api/groups/{{../group.code}}/members/remove"
+      method="POST"
+      onsubmit="return confirm('¿Eliminar usuario del grupo?')"
+    >
+
+      <input
+        type="hidden"
+        name="user_id"
+        value="{{id}}"
+      >
+
+      <button
+        type="submit"
+        class="btn btn-sm btn-outline-danger"
+      >
+        <i class="bi bi-trash"></i>
+      </button>
+
+    </form>
+
+    {{/ifEquals}}
+
+  </div>
+
+</li>
+	{{/each}}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Cuestionarios -->
+  <section class="card border-0 shadow-sm mb-4" aria-label="Cuestionarios asignados">
+    <div class="card-header">
+      <h2 class="h5 mb-0">Cuestionarios asignados</h2>
+    </div>
+    <div class="card-body">
+      <ul class="list-group list-group-flush">
+      
+{{#each group.quizzes}}
+
+<li class="list-group-item">
+
+  <div class="d-flex justify-content-between align-items-start">
+
+    <div>
+
+      <strong>{{title}}</strong>
+
+      <div class="text-muted small mt-1">
+
+        Respuestas:
+        {{responses}}
+
+        ·
+
+        Estado:
+        {{status}}
+
+      </div>
+
+    </div>
+
+    <div class="text-end">
+
+      <span class="badge bg-success">
+        {{average}}%
+      </span>
+
+    </div>
+
+  </div>
+
+</li>
+
+{{/each}}
+
+      </ul>
+    </div>
+  </section>
+
+<div
+  class="modal fade"
+  id="editGroupModal"
+  tabindex="-1"
+>
+
+  <div class="modal-dialog">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+          Editar grupo
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+
+      </div>
+
+      <form
+        action="/api/groups/{{group.code}}/update"
+        method="POST"
+      >
+
+        <div class="modal-body">
+
+          <div class="mb-3">
+
+            <label class="form-label">
+              Nombre
+            </label>
+
+            <input
+              type="text"
+              name="name"
+              class="form-control"
+              value="{{group.name}}"
+              required
+            >
+
+          </div>
+
+          <div class="mb-3">
+
+            <label class="form-label">
+              Descripción
+            </label>
+
+            <textarea
+              name="description"
+              class="form-control"
+              rows="4"
+            >{{group.description}}</textarea>
+
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+          >
+            Guardar cambios
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+</main>

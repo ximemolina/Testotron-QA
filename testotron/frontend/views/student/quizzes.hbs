@@ -1,0 +1,143 @@
+<main id="main-content" class="container py-4" style="padding-top: 70px;" role="main">
+  <header class="mb-4">
+    <h1 class="h4 fw-bold">Mis cuestionarios</h1>
+  </header>
+
+  <!-- Filtros -->
+  <section class="card border-0 shadow-sm mb-4" aria-label="Filtros">
+    <div class="card-body">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-3">
+          <select class="form-select" id="filterGroup" aria-label="Filtrar por grupo">
+            <option value="">Todos los grupos</option>
+          </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" id="filterStatus" aria-label="Filtrar por estado">
+            <option value="">Todos los estados</option>
+            <option value="pending">Pendientes</option>
+            <option value="completed">Realizados</option>
+            <option value="closed">Cerrados</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <input type="search" class="form-control" id="filterSearch" placeholder="Buscar cuestionario..." aria-label="Buscar">
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-outline-secondary w-100" id="clearFilters">Limpiar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Estadísticas -->
+  <section class="row g-4 mb-4" aria-label="Resumen">
+    <div class="col-6 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Total asignados</p>
+          <p class="h3 fw-bold mb-0">{{stats.totalAssigned}}</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-6 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Realizados</p>
+          <p class="h3 fw-bold mb-0">{{stats.completed}}</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-6 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Pendientes</p>
+          <p class="h3 fw-bold mb-0">{{stats.pending}}</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-6 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Promedio</p>
+          <p class="h3 fw-bold mb-0">{{stats.averageScore}}%</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Lista de cuestionarios -->
+  <section class="row g-3" id="quizGrid" aria-label="Listado de cuestionarios">
+    {{#each quizzes}}
+      {{> quiz-card }}
+    {{else}}
+      <div class="col-12">
+        <p class="text-muted">No tienes cuestionarios asignados.</p>
+      </div>
+    {{/each}}
+  </section>
+
+  <p class="text-muted text-center mt-4" id="noResults" style="display:none;">
+    No se encontraron cuestionarios con esos filtros.
+  </p>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const items = document.querySelectorAll('.quiz-item');
+  const searchInput = document.getElementById('filterSearch');
+  const statusSelect = document.getElementById('filterStatus');
+  const groupSelect = document.getElementById('filterGroup');
+  const noResults = document.getElementById('noResults');
+  const clearBtn = document.getElementById('clearFilters');
+
+  // Populate group options from card data
+  const groups = new Set();
+  items.forEach(item => {
+    const g = (item.dataset.group || '').trim();
+    if (g) groups.add(g);
+  });
+  groups.forEach(g => {
+    const opt = document.createElement('option');
+    opt.value = g;
+    opt.textContent = g;
+    groupSelect.appendChild(opt);
+  });
+
+  function applyFilters() {
+    const search = (searchInput.value || '').toLowerCase().trim();
+    const status = statusSelect.value;
+    const group = groupSelect.value;
+
+    let visible = 0;
+    items.forEach(item => {
+      const title = (item.dataset.title || '').toLowerCase();
+      const itemGroup = (item.dataset.group || '').trim();
+      const itemStatus = item.dataset.status || '';
+      const itemCompleted = item.dataset.completed === 'true';
+
+      let show = true;
+      if (search && !title.includes(search)) show = false;
+      if (group && itemGroup !== group) show = false;
+      if (status === 'pending' && (itemCompleted || itemStatus === 'closed')) show = false;
+      if (status === 'completed' && !itemCompleted) show = false;
+      if (status === 'closed' && itemStatus !== 'closed') show = false;
+
+      item.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+
+    noResults.style.display = (visible === 0 && items.length > 0) ? '' : 'none';
+  }
+
+  searchInput.addEventListener('input', applyFilters);
+  statusSelect.addEventListener('change', applyFilters);
+  groupSelect.addEventListener('change', applyFilters);
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    statusSelect.value = '';
+    groupSelect.value = '';
+    applyFilters();
+  });
+});
+</script>

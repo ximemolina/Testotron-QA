@@ -1,0 +1,193 @@
+<div
+  class="modal fade"
+  id="questionModal"
+  tabindex="-1"
+  aria-labelledby="questionModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="questionModalLabel">
+          Añadir pregunta
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Cerrar"
+        ></button>
+      </div>
+
+      <form id="question-modal-form">
+
+	      <div class="modal-body">
+
+<input
+  type="hidden"
+  id="questionId"
+  value=""
+>
+          <!-- QUESTION -->
+          <div class="mb-3">
+            <label for="questionText" class="form-label">
+              Pregunta
+            </label>
+
+            <textarea
+              id="questionText"
+              class="form-control"
+              rows="3"
+              required
+              aria-required="true"
+              aria-describedby="questionTextHelp"
+            ></textarea>
+            <div id="questionTextHelp" class="form-text visually-hidden">Campo obligatorio</div>
+          </div>
+
+          <!-- TYPE -->
+          <div class="mb-3">
+            <label for="questionType" class="form-label">
+              Tipo
+            </label>
+
+            <select
+              id="questionType"
+              class="form-select"
+            >
+              <option value="multiple_choice">
+                Selección única
+              </option>
+
+              <option value="multiple_response">
+                Selección múltiple
+              </option>
+
+              <option value="true_false">
+                Verdadero / Falso
+              </option>
+
+              <option value="short_answer">
+                Respuesta corta
+              </option>
+
+              <option value="fill_blank">
+                Completar espacios
+              </option>
+
+              <option value="numeric">
+                Numérica
+              </option>
+
+              <option value="matching">
+                Relación de columnas
+              </option>
+
+              <option value="essay">
+                Ensayo
+              </option>
+            </select>
+          </div>
+
+	<!-- CATEGORY -->
+<div class="mb-3">
+
+  <label
+    for="questionCategory"
+    class="form-label"
+  >
+    Categoría
+  </label>
+
+  <input
+    type="text"
+    id="questionCategory"
+    class="form-control"
+  >
+
+</div>
+
+<!-- DIFFICULTY -->
+<div class="mb-3">
+
+  <label
+    for="questionDifficulty"
+    class="form-label"
+  >
+    Dificultad
+  </label>
+
+  <select
+    id="questionDifficulty"
+    class="form-select"
+  >
+
+    <option value="easy">
+      Fácil
+    </option>
+
+    <option
+      value="medium"
+      selected
+    >
+      Media
+    </option>
+
+    <option value="hard">
+      Difícil
+    </option>
+
+  </select>
+
+</div>
+
+<div class="form-check mt-3">
+
+  <input
+    type="checkbox"
+    class="form-check-input"
+    id="saveToBank"
+    checked
+  >
+
+  <label
+    class="form-check-label"
+    for="saveToBank"
+  >
+    Guardar en banco de preguntas
+  </label>
+
+</div>
+
+	  <!-- DYNAMIC -->
+          <div id="dynamicQuestionFields"></div>
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-success"
+          >
+            Guardar pregunta
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

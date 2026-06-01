@@ -1,0 +1,158 @@
+<main id="main-content" class="container-fluid py-4" role="main">
+  <header class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h3 fw-bold">{{pageTitle}}</h1>
+      <p class="text-muted">{{pageDescription}}</p>
+    </div>
+    <a href="/api/attempt-answers/export" class="btn btn-success text-white"
+      aria-label="Exportar resultados como archivo CSV">
+      <i class="bi bi-download me-1" aria-hidden="true"></i> Exportar CSV
+    </a>
+  </header>
+
+  <!-- Filtros -->
+  <section class="card border-0 shadow-sm mb-4" aria-label="Filtros de resultados">
+    <div class="card-body">
+      <form class="row g-3 align-items-center">
+        <div class="col-md-3">
+          <select class="form-select" name="group">
+
+		  <option value="">
+    Todos los grupos
+</option>
+
+{{#each groups}}
+<option
+    value="{{code}}"
+    {{#ifEquals ../filters.group code}}
+        selected
+    {{/ifEquals}}
+>
+    {{name}}
+</option>
+{{/each}}
+
+	  </select>
+        </div>
+        <div class="col-md-3">
+          <select class="form-select" name="status">
+	  <option value="">
+    Todos los estados
+</option>
+
+<option
+    value="Aprobado"
+>
+    Aprobado
+</option>
+
+<option
+    value="Reprobado"
+>
+    Reprobado
+</option>
+	  </select>
+        </div>
+        <div class="col-md-4">
+          <input type="search" class="form-control" name="search" placeholder="Buscar estudiante o cuestionario..." value="{{filters.search}}">
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Estadísticas -->
+  <section class="row g-4 mb-4" aria-label="Resumen de resultados">
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Total de resultados</p>
+          <p class="h3 fw-bold mb-0">{{stats.totalResults}}</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Promedio general</p>
+          <p class="h3 fw-bold mb-0">{{stats.averageScore}}%</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Tasa de aprobación</p>
+          <p class="h3 fw-bold mb-0">{{stats.approvalRate}}%</p>
+        </div>
+      </article>
+    </div>
+    <div class="col-12 col-md-3">
+      <article class="card border-0 shadow-sm h-100">
+        <div class="card-body">
+          <p class="text-muted small mb-2">Intentos totales</p>
+          <p class="h3 fw-bold mb-0">{{stats.totalAttempts}}</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Tabla de resultados -->
+  <section class="card border-0 shadow-sm" aria-label="Tabla de resultados">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th scope="col">Estudiante</th>
+              <th scope="col">Cuestionario</th>
+              <th scope="col">Grupo</th>
+              <th scope="col">Puntuación</th>
+              <th scope="col">Estado</th>
+              <th scope="col">Fecha de entrega</th>
+              <th scope="col">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{#if filteredResults.length}}
+              {{#each filteredResults}}
+                <tr>
+                  <td>
+                    <div class="fw-medium">{{student_name}}</div>
+                    <div class="small text-muted">{{student_email}}</div>
+                  </td>
+                  <td>{{quiz_title}}</td>
+                  <td>{{group_name}}</td>
+                  <td>{{score}}/{{max_score}} <span class="text-muted small">({{percentage}}%)</span></td>
+                  <td>
+                    {{#ifEquals status "Aprobado"}}
+                      <span class="badge bg-success">{{status}}</span>
+                    {{else}}
+                      {{#ifEquals status "Reprobado"}}
+                        <span class="badge bg-danger">{{status}}</span>
+                      {{else}}
+                        <span class="badge bg-warning text-dark">{{status}}</span>
+                      {{/ifEquals}}
+                    {{/ifEquals}}
+                  </td>
+                  <td class="small">{{submitted_at}}</td>
+                  <td>
+                    <a href="/teacher/grade/{{attempt_id}}" class="btn btn-sm btn-outline-secondary" title="Ver detalle">
+                      <i class="bi bi-eye"></i>
+                    </a>
+                  </td>
+                </tr>
+              {{/each}}
+            {{else}}
+              <tr>
+                <td colspan="7" class="text-center py-4 text-muted">No hay resultados registrados.</td>
+              </tr>
+            {{/if}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>

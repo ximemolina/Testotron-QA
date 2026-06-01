@@ -1,0 +1,100 @@
+<main id="main-content" class="container py-4" role="main">
+
+  <header class="mb-4">
+    <h1 class="h3 fw-bold">{{quizTitle}}</h1>
+    <p class="text-muted small">Código: <span class="font-monospace">{{quizCode}}</span></p>
+  </header>
+
+  {{#if isGraded}}
+    <section class="card border-0 shadow-sm mb-4" aria-labelledby="result-heading" role="region">
+      <div class="card-body text-center py-5">
+        {{#if passed}}
+          <div class="mb-3" aria-hidden="true">
+            <i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;" aria-hidden="true"></i>
+          </div>
+          <h2 id="result-heading" class="h2 fw-bold text-success mb-1" role="status">¡Aprobado!</h2>
+        {{else}}
+          <div class="mb-3" aria-hidden="true">
+            <i class="bi bi-x-circle-fill text-danger" style="font-size: 4rem;" aria-hidden="true"></i>
+          </div>
+          <h2 id="result-heading" class="h2 fw-bold text-danger mb-1" role="status">Reprobado</h2>
+        {{/if}}
+        <p class="text-muted mb-4">Puntaje mínimo para aprobar: {{minScore}}%</p>
+
+        <div class="row justify-content-center g-4 mb-4">
+          <div class="col-auto">
+            <div class="card bg-light border-0 px-4 py-3">
+              <p class="text-muted small mb-1">Puntaje</p>
+              <p class="h3 fw-bold mb-0">{{score}} / {{maxScore}}</p>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="card bg-light border-0 px-4 py-3">
+              <p class="text-muted small mb-1">Porcentaje</p>
+              <p class="h3 fw-bold mb-0">{{percentage}}%</p>
+            </div>
+          </div>
+        </div>
+
+        {{#if showAnswers}}
+          <hr class="my-4">
+          <h3 class="h5 fw-bold text-start mb-3">Revisión de respuestas</h3>
+          <div class="text-start">
+            {{#each answers}}
+              <article class="card mb-3 border-0 shadow-sm" aria-label="Pregunta {{@index}}">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <p class="fw-medium mb-0">{{question}}</p>
+                    {{#if (eq pts_obtained pts)}}
+                      <span class="badge bg-success ms-2 flex-shrink-0">+{{pts_obtained}} pts</span>
+                    {{else}}
+                      <span class="badge bg-danger ms-2 flex-shrink-0">{{pts_obtained}}/{{pts}} pts</span>
+                    {{/if}}
+                  </div>
+                  <p class="mb-1 small">
+                    <strong>Tu respuesta:</strong>
+                    {{#if response}}{{response}}{{else}}<em class="text-muted">Sin respuesta</em>{{/if}}
+                  </p>
+                  {{#if feedback}}
+                    <p class="mb-0 small text-primary mt-1">
+                      <i class="bi bi-chat-left-text" aria-hidden="true"></i>
+                      {{feedback}}
+                    </p>
+                  {{/if}}
+                </div>
+              </article>
+            {{/each}}
+          </div>
+        {{/if}}
+      </div>
+    </section>
+
+  {{else if isSubmitted}}
+    <section class="card border-0 shadow-sm mb-4 text-center py-5" aria-label="Estado del intento">
+      <div class="card-body">
+        <i class="bi bi-hourglass-split text-warning mb-3" style="font-size: 3rem;" aria-hidden="true"></i>
+        <h2 class="h4 fw-bold mb-2">Cuestionario entregado</h2>
+        <p class="text-muted">Tu cuestionario ha sido enviado y está pendiente de calificación. Vuelve más tarde para ver tu resultado.</p>
+      </div>
+    </section>
+
+  {{else}}
+    <section class="card border-0 shadow-sm mb-4 text-center py-5" aria-label="Estado del intento">
+      <div class="card-body">
+        <i class="bi bi-pencil text-primary mb-3" style="font-size: 3rem;" aria-hidden="true"></i>
+        <h2 class="h4 fw-bold mb-2">Cuestionario en progreso</h2>
+        <p class="text-muted">Aún no has enviado este cuestionario.</p>
+        <a href="/student/quiz/{{quizCode}}" class="btn btn-primary mt-2">
+          <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Continuar cuestionario
+        </a>
+      </div>
+    </section>
+  {{/if}}
+
+  <div class="mt-3">
+    <a href="/student/quizzes" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver a mis cuestionarios
+    </a>
+  </div>
+
+</main>

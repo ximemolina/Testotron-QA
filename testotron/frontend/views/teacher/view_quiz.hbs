@@ -1,0 +1,197 @@
+<main id="main-content" class="container-fluid py-4" role="main">
+  <header class="mb-4 d-flex justify-content-between align-items-center">
+    <div>
+      <h1 class="h3 fw-bold mb-1">{{quiz.title}}</h1>
+      <p class="text-muted mb-0 small">
+        Código: <span class="font-monospace fw-bold">{{quiz.code}}</span>
+        {{#if quiz.group_name}}
+          · Grupo: {{quiz.group_name}}
+        {{/if}}
+      </p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/teacher/quizzes/edit/{{quiz.code}}" class="btn btn-outline-primary">
+        <i class="bi bi-pencil me-1" aria-hidden="true"></i> Editar
+      </a>
+      <a href="/teacher/quizzes" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Volver
+      </a>
+    </div>
+  </header>
+
+  <!-- Configuración -->
+  <div class="row g-4 mb-4">
+    <div class="col-md-8">
+      <section class="card border-0 shadow-sm h-100" aria-labelledby="quiz-details-title">
+        <div class="card-body">
+          <h2 id="quiz-details-title" class="h6 fw-semibold mb-3">Detalles</h2>
+          {{#if quiz.description}}
+            <p class="text-muted mb-3">{{quiz.description}}</p>
+          {{/if}}
+          {{#if quiz.instructions}}
+            <div class="alert alert-light mb-3">
+              <strong>Instrucciones:</strong> {{quiz.instructions}}
+            </div>
+          {{/if}}
+          <dl class="row small mb-0">
+            <dt class="col-sm-4">Estado</dt>
+            <dd class="col-sm-8">
+              {{#if (eq quiz.status 'published')}}
+                <span class="badge bg-success">Publicado</span>
+              {{else if (eq quiz.status 'closed')}}
+                <span class="badge bg-danger">Cerrado</span>
+              {{else}}
+                <span class="badge bg-warning text-dark">Borrador</span>
+              {{/if}}
+            </dd>
+            <dt class="col-sm-4">Puntaje mínimo</dt>
+            <dd class="col-sm-8">{{quiz.min_score}}%</dd>
+            {{#if quiz.time_limit_minutes}}
+              <dt class="col-sm-4">Tiempo límite</dt>
+              <dd class="col-sm-8">{{quiz.time_limit_minutes}} min</dd>
+            {{/if}}
+            <dt class="col-sm-4">Mezclar preguntas</dt>
+            <dd class="col-sm-8">{{#if quiz.shuffle_questions}}Sí{{else}}No{{/if}}</dd>
+            <dt class="col-sm-4">Mezclar respuestas</dt>
+            <dd class="col-sm-8">{{#if quiz.shuffle_answers}}Sí{{else}}No{{/if}}</dd>
+            <dt class="col-sm-4">Mostrar respuestas</dt>
+            <dd class="col-sm-8">{{#if quiz.show_answers}}Sí{{else}}No{{/if}}</dd>
+          </dl>
+        </div>
+      </section>
+    </div>
+
+    <div class="col-md-4">
+      <section class="card border-0 shadow-sm h-100" aria-labelledby="quiz-actions-title">
+        <div class="card-body">
+          <h2 id="quiz-actions-title" class="h6 fw-semibold mb-3">Acciones</h2>
+          <div class="d-grid gap-2">
+            {{#if (eq quiz.status 'draft')}}
+              <button class="btn btn-success" id="publishBtn" data-code="{{quiz.code}}">
+                <i class="bi bi-send me-1" aria-hidden="true"></i> Publicar
+              </button>
+            {{/if}}
+            {{#if (eq quiz.status 'published')}}
+              <button class="btn btn-warning" id="closeBtn" data-code="{{quiz.code}}">
+                <i class="bi bi-lock me-1" aria-hidden="true"></i> Cerrar
+              </button>
+            {{/if}}
+            <a href="/teacher/results" class="btn btn-outline-secondary">
+              <i class="bi bi-bar-chart me-1" aria-hidden="true"></i> Ver resultados
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Preguntas -->
+  <section class="card border-0 shadow-sm" aria-labelledby="questions-title">
+    <div class="card-body">
+      <h2 id="questions-title" class="h6 fw-semibold mb-3">
+        Preguntas <span class="badge bg-secondary ms-1">{{quiz.questions.length}}</span>
+      </h2>
+      {{#if quiz.questions.length}}
+        <ol class="list-group list-group-numbered" id="question-list">
+          {{#each quiz.questions}}
+            <li class="list-group-item"
+              data-type="{{type}}"
+              data-metadata="{{json metadata}}"
+              data-correct="{{json correct_answer}}">
+              <div class="ms-2">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <p class="fw-medium mb-0">{{question}}</p>
+                  <span class="badge bg-primary rounded-pill ms-2 flex-shrink-0">{{pts}} pt{{#if (eq pts 1)}}{{else}}s{{/if}}</span>
+                </div>
+                <span class="badge bg-light text-dark border me-1 type-label">{{type}}</span>
+                <div class="mt-2 question-detail"></div>
+              </div>
+            </li>
+          {{/each}}
+        </ol>
+      {{else}}
+        <p class="text-muted mb-0">Este cuestionario no tiene preguntas aún.</p>
+      {{/if}}
+    </div>
+  </section>
+</main>
+
+<script>
+(function() {
+  const TYPE_LABELS = {
+    multiple_choice: 'Selección única',
+    multiple_response: 'Selección múltiple',
+    true_false: 'Verdadero / Falso',
+    short_answer: 'Respuesta corta',
+    fill_blank: 'Completar espacios',
+    numeric: 'Numérica',
+    essay: 'Ensayo',
+    matching: 'Relación de columnas'
+  };
+
+  function esc(s) {
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  document.querySelectorAll('#question-list li').forEach(li => {
+    const type = li.dataset.type;
+    const metadata = JSON.parse(li.dataset.metadata || '{}');
+    const correct = JSON.parse(li.dataset.correct || 'null');
+
+    // Translate type label
+    const typeSpan = li.querySelector('.type-label');
+    if (typeSpan) typeSpan.textContent = TYPE_LABELS[type] || type;
+
+    const detail = li.querySelector('.question-detail');
+    if (!detail) return;
+
+    if (type === 'multiple_choice' || type === 'multiple_response') {
+      const opts = Array.isArray(metadata.options) ? metadata.options : [];
+      const correctArr = Array.isArray(correct) ? correct : (correct !== null ? [correct] : []);
+      detail.innerHTML = '<ul class="list-unstyled mb-0 small">' +
+        opts.map((opt, i) => {
+          const isCorrect = correctArr.includes(i);
+          return `<li class="${isCorrect ? 'text-success fw-semibold' : 'text-muted'}">
+            <i class="bi ${isCorrect ? 'bi-check-circle-fill' : 'bi-circle'} me-1" aria-hidden="true"></i>${esc(opt)}
+          </li>`;
+        }).join('') + '</ul>';
+    } else if (type === 'true_false') {
+      const label = correct === true || correct === 'true' ? 'Verdadero' : 'Falso';
+      detail.innerHTML = `<small class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Respuesta correcta: <strong>${label}</strong></small>`;
+    } else if (type === 'short_answer' || type === 'fill_blank') {
+      detail.innerHTML = `<small class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Respuesta esperada: <strong>${esc(correct)}</strong></small>`;
+    } else if (type === 'numeric') {
+      detail.innerHTML = `<small class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Valor correcto: <strong>${esc(correct)}</strong></small>`;
+    } else if (type === 'matching') {
+      const pairs = Array.isArray(correct) ? correct : (Array.isArray(metadata.pairs) ? metadata.pairs : []);
+      detail.innerHTML = '<ul class="list-unstyled mb-0 small">' +
+        pairs.map(p => `<li class="text-muted"><strong>${esc(p.left)}</strong> → ${esc(p.right)}</li>`).join('') +
+        '</ul>';
+    } else if (type === 'essay') {
+      detail.innerHTML = '<small class="text-muted fst-italic">Pregunta de ensayo — calificación manual</small>';
+    }
+  });
+
+  // Publish / Close
+  const publishBtn = document.getElementById('publishBtn');
+  if (publishBtn) {
+    publishBtn.addEventListener('click', async () => {
+      if (!confirm('¿Publicar este cuestionario? Los estudiantes podrán verlo.')) return;
+      publishBtn.disabled = true;
+      const res = await fetch(`/api/tests/${publishBtn.dataset.code}/publish`, { method: 'POST' });
+      if (res.ok) location.reload();
+      else { alert('No se pudo publicar'); publishBtn.disabled = false; }
+    });
+  }
+  const closeBtn = document.getElementById('closeBtn');
+  if (closeBtn) {
+    closeBtn.addEventListener('click', async () => {
+      if (!confirm('¿Cerrar este cuestionario? Los estudiantes no podrán enviarlo.')) return;
+      closeBtn.disabled = true;
+      const res = await fetch(`/api/tests/${closeBtn.dataset.code}/close`, { method: 'POST' });
+      if (res.ok) location.reload();
+      else { alert('No se pudo cerrar'); closeBtn.disabled = false; }
+    });
+  }
+})();
+</script>
