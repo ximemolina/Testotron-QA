@@ -248,55 +248,6 @@ CREATE TABLE IF NOT EXISTS user_groups (
         ON DELETE CASCADE
 );`);
 
-  // Migration: add owner_id to existing tables if missing (preserve data)
-  try {
-    const adminRow = d.prepare("SELECT id FROM users WHERE role = 'admin' LIMIT 1").get();
-    let adminId = adminRow ? adminRow.id : null;
-    if (!adminId) {
-      // create a fallback admin
-      const bcrypt = require('bcrypt');
-      const pw = bcrypt.hashSync('admin', 10);
-      const info = d.prepare('INSERT INTO users (email, name, password, role) VALUES (?, ?, ?, ?)').run('admin@local.com', 'admin', pw, 'admin');
-      adminId = info.lastInsertRowid;
-    }
-
-    // groups.owner_id
-    const groupInfo = d.prepare("PRAGMA table_info('groups')").all();
-    if (!groupInfo.find(c => c.name === 'owner_id')) {
-      d.prepare('ALTER TABLE groups ADD COLUMN owner_id INTEGER').run();
-      d.prepare('UPDATE groups SET owner_id = ? WHERE owner_id IS NULL').run(adminId);
-    }
-
-    // tests.owner_id
-    const testInfo = d.prepare("PRAGMA table_info('tests')").all();
-    if (!testInfo.find(c => c.name === 'owner_id')) {
-      d.prepare('ALTER TABLE tests ADD COLUMN owner_id INTEGER').run();
-      d.prepare('UPDATE tests SET owner_id = ? WHERE owner_id IS NULL').run(adminId);
-    }
-
-    // sections.created_by
-    const sectionInfo = d.prepare("PRAGMA table_info('sections')").all();
-    if (!sectionInfo.find(c => c.name === 'created_by')) {
-      try {
-        d.prepare('ALTER TABLE sections ADD COLUMN created_by INTEGER').run();
-        d.prepare('UPDATE sections SET created_by = ? WHERE created_by IS NULL').run(adminId);
-      } catch (e) { /* ignore */ }
-    }
-
-    // items.created_by
-    const itemInfo = d.prepare("PRAGMA table_info('items')").all();
-    if (!itemInfo.find(c => c.name === 'created_by')) {
-      try {
-        d.prepare('ALTER TABLE items ADD COLUMN created_by INTEGER').run();
-        d.prepare('UPDATE items SET created_by = ? WHERE created_by IS NULL').run(adminId);
-      } catch (e) { /* ignore */ }
-    }
-
-    // ensure indexes exist (already created above via CREATE INDEX IF NOT EXISTS)
-  } catch (err) {
-    console.error('Migration warning: could not ensure ownership columns/indexes', err);
-  }
-
   return d;
 }
 

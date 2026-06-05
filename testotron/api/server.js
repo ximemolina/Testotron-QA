@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const authPopulate = require('./middleware/authPopulate');
 const { initDB, createSchema, getDB } = require('./db');
+const { seed } = require('./seed');
 
 // api routes
 const authRoutes = require('./routes/auth');
@@ -49,6 +50,7 @@ initDB();
 // run `node api/server.js init` to create schema
 if (process.argv[2] === 'init') { 
 	createSchema();
+    seed();
   	console.log('Schema created');
   	process.exit(0);
 }
