@@ -1,0 +1,174 @@
+{
+  "run_id": "1780802292",
+  "student_email": "estudiante.qa.1780802292@testotron.local",
+  "other_email": "otro.qa.1780802292@testotron.local",
+  "results": [
+    {
+      "case_id": "TC-AUTH-001",
+      "name": "Registro exitoso de estudiante",
+      "state": "Paso",
+      "expected": "201 y usuario student creado",
+      "actual": "status=201, body={'success': True, 'user': {'id': 25, 'name': 'Estudiante QA', 'email': 'estudiante.qa.1780802292@testotron.local', 'role': 'student'}}",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-AUTH-002",
+      "name": "Login exitoso",
+      "state": "Paso",
+      "expected": "200, token y usuario",
+      "actual": "status=200, user_id=25, token_presente=True, elapsed_ms=118.02",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-AUTH-004",
+      "name": "Consulta de usuario autenticado",
+      "state": "Paso",
+      "expected": "200 sin campo password",
+      "actual": "status=200, contiene_password=False",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-PROFILE-001",
+      "name": "Visualizacion de perfil autenticado",
+      "state": "Paso",
+      "expected": "200 y vista de configuracion de cuenta",
+      "actual": "status=200, url=http://localhost:8080/profile, contiene_configuracion=True",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-INT-AUTH-001",
+      "name": "Login, cookie JWT y acceso a dashboard",
+      "state": "Paso",
+      "expected": "Cookie de login permite acceder a /dashboard",
+      "actual": "status=200, url=http://localhost:8080/dashboard, contiene_panel=True",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-PROFILE-002",
+      "name": "Actualizacion exitosa de perfil",
+      "state": "Paso",
+      "expected": "Redireccion a /profile?updated=1",
+      "actual": "status=200, final_url=http://localhost:8080/profile?updated=1",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-SEG-006",
+      "name": "XSS en biografia",
+      "state": "Paso",
+      "expected": "El payload no debe renderizarse como script HTML",
+      "actual": "status=200, script_literal_en_html=False, escapado=True",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-AUTH-NEG-001",
+      "name": "Login con contrasena incorrecta",
+      "state": "Paso",
+      "expected": "401 credenciales no validas",
+      "actual": "status=401, body={'error': 'Credenciales no válidas'}",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-AUTH-NEG-002",
+      "name": "Registro con email invalido",
+      "state": "Paso",
+      "expected": "400 error de validacion",
+      "actual": "status=400, body={'error': 'Error de validación', 'issues': [{'validation': 'email', 'code': 'invalid_string', 'message': 'Invalid email', 'path': ['email']}]}",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-AUTH-NEG-003",
+      "name": "Registro con contrasena corta",
+      "state": "Paso",
+      "expected": "400 error de validacion",
+      "actual": "status=400, body={'error': 'Error de validación', 'issues': [{'code': 'too_small', 'minimum': 6, 'type': 'string', 'inclusive': True, 'exact': False, 'message': 'String must contain at least 6 character(s)', 'path': ['password']}]}",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-SEG-002",
+      "name": "GET /api/users sin autenticacion",
+      "state": "Paso",
+      "expected": "401 sin autenticacion",
+      "actual": "status=401, body={'error': 'Encabezado de autorización o cookie faltante'}",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-SEG-001",
+      "name": "Acceso a perfil sin autenticacion",
+      "state": "Paso",
+      "expected": "Redireccion a /auth/login",
+      "actual": "status=200, final_url=http://localhost:8080/auth/login",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-SEG-003",
+      "name": "Registro de admin por API",
+      "state": "Fallo",
+      "expected": "La API debe rechazar role=admin",
+      "actual": "status=201, body={'success': True, 'user': {'id': 27, 'name': 'Admin No Autorizado', 'email': 'admin.noautorizado.1780802292@testotron.local', 'role': 'admin'}}",
+      "defect": "DEF-AUTH-001",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-SEG-004",
+      "name": "Consulta de datos de otro usuario",
+      "state": "Fallo",
+      "expected": "403 o bloqueo de consulta ajena",
+      "actual": "status=200, expone_otro_usuario=True, contiene_password=True",
+      "defect": "DEF-AUTH-002",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-SEG-005",
+      "name": "Intento de escalamiento de rol propio",
+      "state": "Fallo",
+      "expected": "403 o rechazo de cambio de rol",
+      "actual": "status=200, body={'updated': 1}; auth_me_despues={'user': {'id': 25, 'name': 'Estudiante QA XSS', 'email': 'estudiante.qa.actualizado.1780802292@testotron.local', 'role': 'admin', 'bio': \"<script>alert('xss')</script>\", 'created_at': '2026-06-07 03:18:12', 'updated_at': '2026-06-07 03:18:13'}}",
+      "defect": "DEF-AUTH-003",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-SEG-007",
+      "name": "SQL injection basica en login",
+      "state": "Paso",
+      "expected": "400 o 401",
+      "actual": "status=400, body={'error': 'Error de validación', 'issues': [{'validation': 'email', 'code': 'invalid_string', 'message': 'Invalid email', 'path': ['email']}]}",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-PERF-AUTH-001",
+      "name": "Tiempo promedio de login",
+      "state": "Paso",
+      "expected": "<= 1000 ms promedio local",
+      "actual": "promedio=136.97ms, muestras=[141.04, 127.1, 110.2, 146.91, 116.05, 155.0, 188.3, 129.92, 101.28, 153.92]",
+      "defect": "-",
+      "evidence": "-"
+    },
+    {
+      "case_id": "TC-AUTH-003",
+      "name": "Cierre de sesion exitoso",
+      "state": "Paso",
+      "expected": "Luego de logout, /profile redirige a login",
+      "actual": "logout_status=200, profile_final_url=http://localhost:8080/auth/login",
+      "defect": "-",
+      "evidence": "-"
+    }
+  ],
+  "counts": {
+    "total": 18,
+    "paso": 15,
+    "fallo": 3
+  }
+}
