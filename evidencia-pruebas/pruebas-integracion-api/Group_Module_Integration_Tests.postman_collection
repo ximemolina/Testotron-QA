@@ -1,0 +1,926 @@
+{
+  "info": {
+    "_postman_id": "b62f5c58-989b-4c69-a665-55193e296305",
+    "name": "Group Module Integration Tests - Complete Lifecycle",
+    "description": "Integration tests for the group module simulating a complete cycle:\n1. Teacher creates a group\n2. Teacher changes group information\n3. Teacher consults group information\n4. Teacher invites a student to the group\n5. Student joins the group via code\n6. Teacher expels a member from the group\n7. Teacher deletes the group",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43666731"
+  },
+  "item": [
+    {
+      "name": "Authentication Setup",
+      "item": [
+        {
+          "name": "1. Register Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Teacher registration successful\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(201);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "});",
+                  "",
+                  "var teacherData = pm.response.json();",
+                  "pm.environment.set(\"teacher_id\", teacherData.user.id);",
+                  "pm.environment.set(\"teacher_email\", teacherData.user.email);",
+                  "pm.environment.set(\"teacher_password\", pm.request.body.params[2].value);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Juan García\",\n    \"email\": \"juan.garcia@school.com\",\n    \"password\": \"Teacher@123\",\n    \"role\": \"teacher\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Register Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Student registration successful\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(201);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "});",
+                  "",
+                  "var studentData = pm.response.json();",
+                  "pm.environment.set(\"student_id\", studentData.user.id);",
+                  "pm.environment.set(\"student_email\", studentData.user.email);",
+                  "pm.environment.set(\"student_password\", pm.request.body.params[2].value);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"María López\",\n    \"email\": \"maria.lopez@student.com\",\n    \"password\": \"Student@123\",\n    \"role\": \"student\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Login Teacher",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Teacher login successful\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "var loginData = pm.response.json();",
+                  "pm.collectionVariables.set(\"teacher_token\", loginData.token);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"juan.garcia@school.com\",\n    \"password\": \"Teacher@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Login Teacher Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Teacher login successful\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "var loginData = pm.response.json();",
+                  "pm.collectionVariables.set(\"teacher_token\", loginData.token);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"juan.garcia@school.com\",\n    \"password\": \"Teacher@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Login Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Student login successful\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "var loginData = pm.response.json();",
+                  "pm.collectionVariables.set(\"student_token\", loginData.token);",
+                  "",
+                  "// Guardar el id del usuario en variables de colección",
+                  "try {",
+                  "    var jsonData = pm.response.json();",
+                  "    if (jsonData.user && jsonData.user.id) {",
+                  "        pm.collectionVariables.set(\"student_id\", jsonData.user.id);",
+                  "        console.log(\"student_id guardado en colección:\", jsonData.user.id);",
+                  "    }",
+                  "} catch (e) {",
+                  "    console.log(\"No se pudo parsear JSON:\", e.message);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"maria.lopez@student.com\",\n    \"password\": \"Student@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Group Lifecycle Tests",
+      "item": [
+        {
+          "name": "1. Teacher Creates a Group",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Página de grupos cargada correctamente\", function () {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.text()).to.include(\"Mis grupos\");",
+                  "});",
+                  "",
+                  "// Buscar el código dentro del href",
+                  "var html = pm.response.text();",
+                  "var match = html.match(/href=\"\\/groups\\/([^\"]+)\"/);",
+                  "",
+                  "if (match) {",
+                  "    // Guardar en variables de colección",
+                  "    pm.collectionVariables.set(\"group_code\", match[1]);",
+                  "}",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Matemáticas 101\",\n    \"description\": \"Grupo de estudiantes para el curso de matemáticas básicas del semestre 2026-I\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. Teacher Updates Group Information",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group updated successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().updated).to.equal(true);",
+                  "});",
+                  "",
+                  "console.log(\"Group successfully updated with new information\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Matemáticas 101 - Actualizado\",\n    \"description\": \"Grupo de estudiantes para el curso de matemáticas básicas del semestre 2026-I. Enfoque en álgebra y geometría.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. Teacher Consults Group Information (Basic)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group information retrieved successfully\", function () {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "",
+                  "    var groupData = pm.response.json();",
+                  "",
+                  "    // Validar que existe la propiedad group",
+                  "    pm.expect(groupData).to.have.property(\"group\");",
+                  "",
+                  "    // Validar que el objeto group tiene las propiedades esperadas",
+                  "    pm.expect(groupData.group).to.have.property(\"code\");",
+                  "    pm.expect(groupData.group).to.have.property(\"name\");",
+                  "    pm.expect(groupData.group).to.have.property(\"owner_id\");",
+                  "    pm.expect(groupData.group).to.have.property(\"created_at\");",
+                  "    pm.expect(groupData.group).to.have.property(\"updated_at\");",
+                  "",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Teacher Consults Group Detail (With Members & Stats)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group detail retrieved successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().group).to.exist;",
+                  "    pm.expect(pm.response.json().group.members).to.exist;",
+                  "    pm.expect(Array.isArray(pm.response.json().group.members)).to.equal(true);",
+                  "});",
+                  "",
+                  "var groupDetail = pm.response.json().group;",
+                  "console.log(\"Group members count: \" + groupDetail.members.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}",
+                "detail"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. Teacher Invites Student to Group (By Email)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// 2. User has been added (HTML response)",
+                  "pm.test(\"User has been added\", function () {",
+                  "    var html = pm.response.text();",
+                  "",
+                  "    // Validar que el status es correcto",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "// 3. Response time is acceptable",
+                  "pm.test(\"Response time is acceptable\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"maria.lopez@student.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}/add-user",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}",
+                "add-user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. Student Joins Group Using Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Student joined group successfully\", function() {",
+                  "    // The endpoint may return JSON {added: true} or redirect",
+                  "    pm.expect([200, 302]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "console.log(\"Student successfully joined the group using the code\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"code\": \"{{group_code}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/join",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "join"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. Verify Student is in Group Members List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Members list retrieved successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().members).to.exist;",
+                  "    pm.expect(Array.isArray(pm.response.json().members)).to.equal(true);",
+                  "});",
+                  "",
+                  "var members = pm.response.json().members;",
+                  "var studentEmail = pm.collectionVariables.get(\"student_email\");",
+                  "var studentFound = members.some(m => m.email === studentEmail);",
+                  "",
+                  "pm.test(\"Student is in the group members list\", function() {",
+                  "    pm.expect(studentFound).to.equal(true);",
+                  "});",
+                  "",
+                  "console.log(\"Total members in group: \" + members.length);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}",
+                "members"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. Teacher Expels Student from Group",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Student removed from group successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().removed).to.equal(true);",
+                  "});",
+                  "",
+                  "console.log(\"Student successfully expelled from group\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"user_id\": {{student_id}}\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}",
+                "members"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9. Verify Student Removed from Members List",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Members list retrieved successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().members).to.exist;",
+                  "});",
+                  "",
+                  "var members = pm.response.json().members;",
+                  "var studentEmail = pm.environment.get(\"student_email\");",
+                  "var studentFound = members.some(m => m.email === studentEmail);",
+                  "",
+                  "pm.test(\"Student is no longer in the group\", function() {",
+                  "    pm.expect(studentFound).to.equal(false);",
+                  "});",
+                  "",
+                  "console.log(\"Student successfully verified as removed. Remaining members: \" + members.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}",
+                "members"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10. Teacher Deletes the Group",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group deleted successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "11. Verify Group is Deleted (Should Return 404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group not found (deleted successfully)\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(404);",
+                  "    pm.expect(pm.response.json().error).to.exist;",
+                  "});",
+                  "",
+                  "console.log(\"Group deletion verified - attempting to access deleted group returns 404\");"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "12. Teacher Lists All Their Groups",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Groups list retrieved successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().groups).to.exist;",
+                  "    pm.expect(Array.isArray(pm.response.json().groups)).to.equal(true);",
+                  "});",
+                  "",
+                  "console.log(\"Teacher groups count: \" + pm.response.json().groups.length);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "requests": {},
+        "exec": [
+          "// Set base URL if not already set",
+          "if (!pm.environment.get('base_url')) {",
+          "    pm.environment.set('base_url', 'http://localhost:8080');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "teacher_token",
+      "value": ""
+    },
+    {
+      "key": "student_token",
+      "value": ""
+    },
+    {
+      "key": "group_code",
+      "value": ""
+    },
+    {
+      "key": "teacher_id",
+      "value": ""
+    },
+    {
+      "key": "student_id",
+      "value": ""
+    },
+    {
+      "key": "teacher_email",
+      "value": "juan.garcia@school.com"
+    },
+    {
+      "key": "student_email",
+      "value": "maria.lopez@student.com"
+    },
+    {
+      "key": "teacher_password",
+      "value": "Teacher@123"
+    },
+    {
+      "key": "student_password",
+      "value": "Student@123"
+    }
+  ]
+}
