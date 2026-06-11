@@ -154,6 +154,55 @@
           "response": []
         },
         {
+          "name": "3. Login Teacher Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Teacher login successful\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "var loginData = pm.response.json();",
+                  "pm.collectionVariables.set(\"teacher_token\", loginData.token);",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"juan.garcia@school.com\",\n    \"password\": \"Teacher@123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "4. Login Student",
           "event": [
             {
@@ -381,6 +430,56 @@
           "response": []
         },
         {
+          "name": "2.2. Teacher Updates Group Name with None",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group updated successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().updated).to.equal(true);",
+                  "});",
+                  "",
+                  "console.log(\"Group successfully updated with new information\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"\",\n    \"description\": \"Grupo de estudiantes para el curso de matemáticas básicas del semestre 2026-I. Enfoque en álgebra y geometría.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "3. Teacher Consults Group Information (Basic)",
           "event": [
             {
@@ -435,6 +534,60 @@
           "response": []
         },
         {
+          "name": "3.2. Teacher Consults Nonexistent Group Information (Basic)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group information retrieved successfully\", function () {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "",
+                  "    var groupData = pm.response.json();",
+                  "",
+                  "    // Validar que existe la propiedad group",
+                  "    pm.expect(groupData).to.have.property(\"group\");",
+                  "",
+                  "    // Validar que el objeto group tiene las propiedades esperadas",
+                  "    pm.expect(groupData.group).to.have.property(\"code\");",
+                  "    pm.expect(groupData.group).to.have.property(\"name\");",
+                  "    pm.expect(groupData.group).to.have.property(\"owner_id\");",
+                  "    pm.expect(groupData.group).to.have.property(\"created_at\");",
+                  "    pm.expect(groupData.group).to.have.property(\"updated_at\");",
+                  "",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/ABCDEF",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "ABCDEF"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "4. Teacher Consults Group Detail (With Members & Stats)",
           "event": [
             {
@@ -472,6 +625,52 @@
                 "api",
                 "groups",
                 "{{group_code}}",
+                "detail"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.2. Teacher Consults Nonexistent Group Detail (With Members & Stats)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group detail retrieved successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().group).to.exist;",
+                  "    pm.expect(pm.response.json().group.members).to.exist;",
+                  "    pm.expect(Array.isArray(pm.response.json().group.members)).to.equal(true);",
+                  "});",
+                  "",
+                  "var groupDetail = pm.response.json().group;",
+                  "console.log(\"Group members count: \" + groupDetail.members.length);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/ABCDEF/detail",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "ABCDEF",
                 "detail"
               ]
             }
@@ -543,6 +742,70 @@
           "response": []
         },
         {
+          "name": "5.2. Teacher Invites Student to Group (By Not RegistredEmail)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// 1. Status code is 200",
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// 2. User has been added (HTML response)",
+                  "pm.test(\"User has been added\", function () {",
+                  "    var html = pm.response.text();",
+                  "",
+                  "    // Validar que el status es correcto",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "});",
+                  "",
+                  "// 3. Response time is acceptable",
+                  "pm.test(\"Response time is acceptable\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});",
+                  "",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"nonexistent.student@student.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_code}}/add-user",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_code}}",
+                "add-user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "6. Student Joins Group Using Code",
           "event": [
             {
@@ -577,6 +840,56 @@
             "body": {
               "mode": "raw",
               "raw": "{\n    \"code\": \"{{group_code}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/join",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "join"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6.2. Student Joins Group Using Nonexistent Code",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Student joined group successfully\", function() {",
+                  "    // The endpoint may return JSON {added: true} or redirect",
+                  "    pm.expect([200, 302]).to.include(pm.response.code);",
+                  "});",
+                  "",
+                  "console.log(\"Student successfully joined the group using the code\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"code\": \"ABCDEF\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/groups/join",
@@ -826,6 +1139,46 @@
                 "api",
                 "groups",
                 "{{group_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10.2. Teacher Deletes a Nonexistent Group",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Group deleted successfully\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/groups/ABCDEF",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "ABCDEF"
               ]
             }
           },
