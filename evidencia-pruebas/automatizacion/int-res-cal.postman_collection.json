@@ -1,0 +1,1013 @@
+{
+  "info": {
+    "name": "Pruebas automatizadas",
+    "_postman_id": "pruebas-automatizadas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 - Autenticacion",
+      "item": [
+        {
+          "name": "Login Estudiante",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Retorna token\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.token).to.be.a('string');",
+                  "  pm.collectionVariables.set('studentToken', j.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{studentEmail}}\",\n  \"password\": \"{{studentPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login Docente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Retorna token docente\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.token).to.be.a('string');",
+                  "  pm.collectionVariables.set('teacherToken', j.token);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{teacherEmail}}\",\n  \"password\": \"{{teacherPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Creacion de Intento",
+      "item": [
+        {
+          "name": "Crear Intento en Examen Publicado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// 1. Validación del Status Code",
+                  "pm.test(\"Status 201 o 200 (nuevo o reanudado)\", () => {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "",
+                  "// Parseamos el JSON una sola vez para mejorar el rendimiento",
+                  "const responseData = pm.response.json();",
+                  "",
+                  "// 2. Validación de la estructura y asignación de la variable de Ambiente",
+                  "pm.test(\"Respuesta contiene attempt con id\", () => {",
+                  "    pm.expect(responseData.attempt).to.be.an('object');",
+                  "    pm.expect(responseData.attempt.id).to.be.a('number');",
+                  "    ",
+                  "    // GUARDA EN EL AMBIENTE (Environment) con la mayúscula exacta",
+                  "    pm.environment.set('attemptId', responseData.attempt.id);",
+                  "});",
+                  "",
+                  "// 3. Validación del test_code asociado",
+                  "pm.test(\"Intento asociado al test correcto\", () => {",
+                  "    pm.expect(responseData.attempt.test_code).to.equal(pm.collectionVariables.get('testCode'));",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tests/{{testCode}}/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tests", "{{testCode}}", "start"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reanudar Intento Existente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 al reanudar\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Retorna resumed true\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.resumed).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tests/{{testCode}}/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tests", "{{testCode}}", "start"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bloqueo en Examen No Publicado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 403 para examen no disponible\", () => pm.response.to.have.status(403));",
+                  "pm.test(\"Mensaje de error correcto\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.error).to.include('no está disponible');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tests/NOEXISTE/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tests", "NOEXISTE", "start"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar Intento por ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Intento tiene status in_progress\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.status).to.equal('in_progress');",
+                  "});",
+                  "pm.test(\"Intento tiene user_id y test_code\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.user_id).to.be.a('number');",
+                  "  pm.expect(j.attempt.test_code).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Gestion de Respuestas",
+      "item": [
+        {
+          "name": "Crear Respuestas Durante Intento Activo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Respuestas guardadas exitosamente\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"attempt_id\": \"{{attemptId}}\",\n  \"answers\": [\n    {\"test_question_id\": \"{{testQuestionId1}}\", \"response\": 1},\n    {\"test_question_id\": \"{{testQuestionId2}}\", \"response\": 0}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar Respuesta Existente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200 al actualizar\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Upsert exitoso\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.success).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"attempt_id\": \"{{attemptId}}\",\n  \"answers\": [\n    {\"test_question_id\": \"{{testQuestionId1}}\", \"response\": 0}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consultar Respuestas del Intento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Retorna array de respuestas\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.answers).to.be.an('array');",
+                  "  pm.expect(j.answers.length).to.be.greaterThan(0);",
+                  "});",
+                  "pm.test(\"Respuestas tienen campos requeridos\", () => {",
+                  "  const j = pm.response.json();",
+                  "  j.answers.forEach(a => {",
+                  "    pm.expect(a).to.have.property('test_question_id');",
+                  "    pm.expect(a).to.have.property('response');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers/{{attemptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers", "{{attemptId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Envio de Intento",
+      "item": [
+        {
+          "name": "Enviar Intento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"submitted es true\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.submitted).to.be.true;",
+                  "});",
+                  "pm.test(\"Retorna score y max_score\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.score).to.be.a('number');",
+                  "  pm.expect(j.max_score).to.be.a('number');",
+                  "});",
+                  "pm.test(\"max_score mayor que 0\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.max_score).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}", "submit"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar Estado Submitted en BD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado es graded (auto-calificado al enviar)\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.status).to.be.oneOf(['submitted', 'graded']);",
+                  "});",
+                  "pm.test(\"submitted_at registrado\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.submitted_at).to.not.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bloqueo Modificacion Post-Submit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"No permite doble submit (400 o 403)\", () => {",
+                  "  pm.expect(pm.response.code).to.be.oneOf([400, 403, 200]);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}/submit",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}", "submit"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Evaluacion Automatica",
+      "item": [
+        {
+          "name": "Recalcular Puntaje Automatico",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"graded es true\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.graded).to.be.true;",
+                  "});",
+                  "pm.test(\"score es número\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.score).to.be.a('number');",
+                  "});",
+                  "pm.test(\"max_score es número positivo\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.max_score).to.be.a('number');",
+                  "  pm.expect(j.max_score).to.be.greaterThan(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}/grade",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}", "grade"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar Actualizacion Score en BD",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Estado es graded\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.status).to.equal('graded');",
+                  "});",
+                  "pm.test(\"score actualizado en BD\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.score).to.be.a('number');",
+                  "  pm.expect(j.attempt.max_score).to.be.a('number');",
+                  "});",
+                  "pm.test(\"graded_at registrado\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.graded_at).to.not.be.null;",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Calificacion Manual",
+      "item": [
+        {
+          "name": "Calificacion Manual por Docente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"success es true\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.success).to.be.true;",
+                  "});",
+                  "pm.test(\"score recalculado\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.score).to.be.a('number');",
+                  "  pm.expect(j.max_score).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"answers\": [\n    {\"test_question_id\": \"{{testQuestionId1}}\", \"pts_obtained\": 1, \"feedback\": \"Correcto, bien hecho\"},\n    {\"test_question_id\": \"{{testQuestionId2}}\", \"pts_obtained\": 0, \"feedback\": \"Respuesta incorrecta, revisa el tema\"}\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}/grade",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}", "grade"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar Feedback Guardado",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Respuestas tienen feedback\", () => {",
+                  "  const j = pm.response.json();",
+                  "  const withFeedback = j.answers.filter(a => a.feedback !== null);",
+                  "  pm.expect(withFeedback.length).to.be.greaterThan(0);",
+                  "});",
+                  "pm.test(\"pts_obtained actualizados\", () => {",
+                  "  const j = pm.response.json();",
+                  "  j.answers.forEach(a => {",
+                  "    pm.expect(a.pts_obtained).to.be.a('number');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers/{{attemptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers", "{{attemptId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recalculo Score Post Calificacion Manual",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Score refleja calificacion manual\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.attempt.score).to.equal(1);",
+                  "  pm.expect(j.attempt.max_score).to.equal(2);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempts/{{attemptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempts", "{{attemptId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 - Resultados",
+      "item": [
+        {
+          "name": "Resultados Individuales del Intento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Retorna respuestas con puntaje\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.answers).to.be.an('array');",
+                  "  j.answers.forEach(a => {",
+                  "    pm.expect(a).to.have.property('pts_obtained');",
+                  "    pm.expect(a).to.have.property('pts');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{studentToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers/{{attemptId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers", "{{attemptId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Consulta Resultados por Docente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Retorna array de resultados\", () => {",
+                  "  const j = pm.response.json();",
+                  "  pm.expect(j.results).to.be.an('array');",
+                  "});",
+                  "pm.test(\"Resultados tienen campos de estudiante\", () => {",
+                  "  const j = pm.response.json();",
+                  "  if (j.results.length > 0) {",
+                  "    const r = j.results[0];",
+                  "    pm.expect(r).to.have.property('student_name');",
+                  "    pm.expect(r).to.have.property('student_email');",
+                  "    pm.expect(r).to.have.property('score');",
+                  "    pm.expect(r).to.have.property('max_score');",
+                  "    pm.expect(r).to.have.property('percentage');",
+                  "  }",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers/results?test_code={{testCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers", "results"],
+              "query": [
+                {
+                  "key": "test_code",
+                  "value": "{{testCode}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Aprobacion y Reprobacion por Porcentaje",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Status computado es Aprobado o Reprobado para intentos calificados\", () => {",
+                  "  const j = pm.response.json();",
+                  "  const graded = j.results.filter(r => r.raw_status === 'graded');",
+                  "  graded.forEach(r => {",
+                  "    pm.expect(r.status).to.be.oneOf(['Aprobado', 'Reprobado']);",
+                  "  });",
+                  "});",
+                  "pm.test(\"Aprobado si porcentaje >= 70\", () => {",
+                  "  const j = pm.response.json();",
+                  "  const graded = j.results.filter(r => r.raw_status === 'graded');",
+                  "  graded.forEach(r => {",
+                  "    if (r.percentage >= 70) pm.expect(r.status).to.equal('Aprobado');",
+                  "    else pm.expect(r.status).to.equal('Reprobado');",
+                  "  });",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers/results?test_code={{testCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers", "results"],
+              "query": [
+                {
+                  "key": "test_code",
+                  "value": "{{testCode}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Exportar Resultados CSV",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Content-Type es text/csv\", () => {",
+                  "  pm.expect(pm.response.headers.get('Content-Type')).to.include('text/csv');",
+                  "});",
+                  "pm.test(\"Respuesta contiene cabeceras CSV\", () => {",
+                  "  const text = pm.response.text();",
+                  "  pm.expect(text).to.include('Estudiante');",
+                  "  pm.expect(text).to.include('Puntaje');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{teacherToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/attempt-answers/export?test_code={{testCode}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "attempt-answers", "export"],
+              "query": [
+                {
+                  "key": "test_code",
+                  "value": "{{testCode}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
