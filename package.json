@@ -1,0 +1,32 @@
+{
+  "name": "testotron-qa",
+  "version": "1.0.0",
+  "description": "> **Curso:** Auditoría y Validación de Sistemas de Información   > **Aplicación auditada:** Testotron v1.0   > **Fecha de inicio:** 2026   > **Equipo:** Joshua Corrales, Susana Feng, Ximena Molina y Natalia Orozco",
+  "main": "jest.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ximemolina/Testotron-QA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ximemolina/Testotron-QA/issues"
+  },
+  "homepage": "https://github.com/ximemolina/Testotron-QA#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "better-sqlite3": "^12.10.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "express-handlebars": "^9.0.1",
+    "jest": "^30.4.2",
+    "jsonwebtoken": "^9.0.3",
+    "zod": "^4.4.3"
+  }
+}

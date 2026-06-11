@@ -7,5 +7,10 @@ module.exports = {
   // opcional: aliases para imports limpios
   moduleDirectories: ['node_modules', 'testotron/api'],
 
+  moduleNameMapper: {
+    '^better-sqlite3$': '<rootDir>/__mocks__/better-sqlite3.js',
+    '^bcrypt$': '<rootDir>/__mocks__/bcrypt.js'
+  },
+
   clearMocks: true
 };
