@@ -1,8 +1,7 @@
 {
   "info": {
-    "_postman_id": "b62f5c58-989b-4c69-a665-55193e296305",
-    "name": "Group Module Integration Tests - Complete Lifecycle",
-    "description": "Integration tests for the group module simulating a complete cycle:\n1. Teacher creates a group\n2. Teacher changes group information\n3. Teacher consults group information\n4. Teacher invites a student to the group\n5. Student joins the group via code\n6. Teacher expels a member from the group\n7. Teacher deletes the group",
+    "_postman_id": "bcac7bc6-d796-47e8-912f-39f355331adb",
+    "name": "Group Module Negative Tests",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "43666731"
   },
@@ -265,10 +264,10 @@
       ]
     },
     {
-      "name": "Group Lifecycle Tests",
+      "name": "Pruebas negativas",
       "item": [
         {
-          "name": "1. Teacher Creates a Group",
+          "name": "1.2. Teacher Creates a Group with No Name",
           "event": [
             {
               "listen": "test",
@@ -309,7 +308,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Matemáticas 101\",\n    \"description\": \"Grupo de estudiantes para el curso de matemáticas básicas del semestre 2026-I\"\n}"
+              "raw": "{\n    \"name\": \"\",\n    \"description\": \"Grupo de estudiantes para el curso de matemáticas básicas del semestre 2026-I\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/groups",
@@ -325,7 +324,7 @@
           "response": []
         },
         {
-          "name": "2. Teacher Updates Group Information",
+          "name": "2.2. Teacher Updates Group Name with None",
           "event": [
             {
               "listen": "test",
@@ -338,7 +337,9 @@
                   "",
                   "console.log(\"Group successfully updated with new information\");"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -356,7 +357,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Matemáticas 101 - Actualizado\",\n    \"description\": \"Grupo de estudiantes para el curso de matemáticas básicas del semestre 2026-I. Enfoque en álgebra y geometría.\"\n}"
+              "raw": "{\n    \"name\": \"\",\n    \"description\": \"Grupo de estudiantes para el curso de matemáticas básicas del semestre 2026-I. Enfoque en álgebra y geometría.\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/groups/{{group_code}}",
@@ -373,7 +374,7 @@
           "response": []
         },
         {
-          "name": "3. Teacher Consults Group Information (Basic)",
+          "name": "3.2. Teacher Consults Nonexistent Group Information (Basic)",
           "event": [
             {
               "listen": "test",
@@ -413,21 +414,21 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/groups/{{group_code}}",
+              "raw": "{{base_url}}/api/groups/ABCDEF",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "groups",
-                "{{group_code}}"
+                "ABCDEF"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "4. Teacher Consults Group Detail (With Members & Stats)",
+          "name": "4.2. Teacher Consults Nonexistent Group Detail (With Members & Stats)",
           "event": [
             {
               "listen": "test",
@@ -443,7 +444,9 @@
                   "var groupDetail = pm.response.json().group;",
                   "console.log(\"Group members count: \" + groupDetail.members.length);"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -456,14 +459,14 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/groups/{{group_code}}/detail",
+              "raw": "{{base_url}}/api/groups/ABCDEF/detail",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "groups",
-                "{{group_code}}",
+                "ABCDEF",
                 "detail"
               ]
             }
@@ -471,7 +474,7 @@
           "response": []
         },
         {
-          "name": "5. Teacher Invites Student to Group (By Email)",
+          "name": "5.2. Teacher Invites Student to Group (By Not RegistredEmail)",
           "event": [
             {
               "listen": "test",
@@ -517,7 +520,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"email\": \"maria.lopez@student.com\"\n}"
+              "raw": "{\n    \"email\": \"nonexistent.student@student.com\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/groups/{{group_code}}/add-user",
@@ -535,7 +538,7 @@
           "response": []
         },
         {
-          "name": "6. Student Joins Group Using Code",
+          "name": "6.2. Student Joins Group Using Nonexistent Code",
           "event": [
             {
               "listen": "test",
@@ -568,7 +571,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"code\": \"{{group_code}}\"\n}"
+              "raw": "{\n    \"code\": \"ABCDEF\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/groups/join",
@@ -585,59 +588,7 @@
           "response": []
         },
         {
-          "name": "7. Verify Student is in Group Members List",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Members list retrieved successfully\", function() {",
-                  "    pm.expect(pm.response.code).to.equal(200);",
-                  "    pm.expect(pm.response.json().members).to.exist;",
-                  "    pm.expect(Array.isArray(pm.response.json().members)).to.equal(true);",
-                  "});",
-                  "",
-                  "var members = pm.response.json().members;",
-                  "var studentEmail = pm.collectionVariables.get(\"student_email\");",
-                  "var studentFound = members.some(m => m.email === studentEmail);",
-                  "",
-                  "pm.test(\"Student is in the group members list\", function() {",
-                  "    pm.expect(studentFound).to.equal(true);",
-                  "});",
-                  "",
-                  "console.log(\"Total members in group: \" + members.length);"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{teacher_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/groups/{{group_code}}/members",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "groups",
-                "{{group_code}}",
-                "members"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "8. Teacher Expels Student from Group",
+          "name": "8.2. Teacher Expels Non Member Student from Group",
           "event": [
             {
               "listen": "test",
@@ -650,7 +601,9 @@
                   "",
                   "console.log(\"Student successfully expelled from group\");"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -668,7 +621,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"user_id\": {{student_id}}\n}"
+              "raw": "{\n    \"user_id\": 3\n}"
             },
             "url": {
               "raw": "{{base_url}}/api/groups/{{group_code}}/members",
@@ -686,56 +639,7 @@
           "response": []
         },
         {
-          "name": "9. Verify Student Removed from Members List",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Members list retrieved successfully\", function() {",
-                  "    pm.expect(pm.response.code).to.equal(200);",
-                  "    pm.expect(pm.response.json().members).to.exist;",
-                  "});",
-                  "",
-                  "var members = pm.response.json().members;",
-                  "var studentEmail = pm.environment.get(\"student_email\");",
-                  "var studentFound = members.some(m => m.email === studentEmail);",
-                  "",
-                  "pm.test(\"Student is no longer in the group\", function() {",
-                  "    pm.expect(studentFound).to.equal(false);",
-                  "});",
-                  "",
-                  "console.log(\"Student successfully verified as removed. Remaining members: \" + members.length);"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{teacher_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/groups/{{group_code}}/members",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "groups",
-                "{{group_code}}",
-                "members"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "10. Teacher Deletes the Group",
+          "name": "10.2. Teacher Deletes a Nonexistent Group",
           "event": [
             {
               "listen": "test",
@@ -746,7 +650,9 @@
                   "    pm.expect(pm.response.json().success).to.equal(true);",
                   "});"
                 ],
-                "type": "text/javascript"
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
               }
             }
           ],
@@ -759,168 +665,20 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/groups/{{group_code}}",
+              "raw": "{{base_url}}/api/groups/ABCDEF",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "groups",
-                "{{group_code}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "11. Verify Group is Deleted (Should Return 404)",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Group not found (deleted successfully)\", function() {",
-                  "    pm.expect(pm.response.code).to.equal(404);",
-                  "    pm.expect(pm.response.json().error).to.exist;",
-                  "});",
-                  "",
-                  "console.log(\"Group deletion verified - attempting to access deleted group returns 404\");"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{teacher_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/groups/{{group_code}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "groups",
-                "{{group_code}}"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "12. Teacher Lists All Their Groups",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test(\"Groups list retrieved successfully\", function() {",
-                  "    pm.expect(pm.response.code).to.equal(200);",
-                  "    pm.expect(pm.response.json().groups).to.exist;",
-                  "    pm.expect(Array.isArray(pm.response.json().groups)).to.equal(true);",
-                  "});",
-                  "",
-                  "console.log(\"Teacher groups count: \" + pm.response.json().groups.length);"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{teacher_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/api/groups",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "groups"
+                "ABCDEF"
               ]
             }
           },
           "response": []
         }
       ]
-    }
-  ],
-  "event": [
-    {
-      "listen": "prerequest",
-      "script": {
-        "type": "text/javascript",
-        "requests": {},
-        "exec": [
-          "// Set base URL if not already set",
-          "if (!pm.environment.get('base_url')) {",
-          "    pm.environment.set('base_url', 'http://localhost:8080');",
-          "}"
-        ]
-      }
-    },
-    {
-      "listen": "test",
-      "script": {
-        "type": "text/javascript",
-        "packages": {},
-        "requests": {},
-        "exec": [
-          ""
-        ]
-      }
-    }
-  ],
-  "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:8080"
-    },
-    {
-      "key": "teacher_token",
-      "value": ""
-    },
-    {
-      "key": "student_token",
-      "value": ""
-    },
-    {
-      "key": "group_code",
-      "value": ""
-    },
-    {
-      "key": "teacher_id",
-      "value": ""
-    },
-    {
-      "key": "student_id",
-      "value": ""
-    },
-    {
-      "key": "teacher_email",
-      "value": "juan.garcia@school.com"
-    },
-    {
-      "key": "student_email",
-      "value": "maria.lopez@student.com"
-    },
-    {
-      "key": "teacher_password",
-      "value": "Teacher@123"
-    },
-    {
-      "key": "student_password",
-      "value": "Student@123"
     }
   ]
 }
