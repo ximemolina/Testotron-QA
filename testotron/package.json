@@ -19,5 +19,8 @@
     "express-handlebars": "^8.0.7",
     "jsonwebtoken": "^9.0.3",
     "zod": "^3.25.65"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.1"
   }
 }
