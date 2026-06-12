@@ -1,0 +1,721 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\playwright.estudiante.config.ts",
+    "rootDir": "C:/Users/User/Desktop/QA/Testotron-QA/evidencia-pruebas/pruebas-usabilidad/tests",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/User/Desktop/QA/Testotron-QA/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/User/Desktop/QA/Testotron-QA/evidencia-pruebas/pruebas-usabilidad/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "grupos-estudiante.accessibility.spec.ts"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "reports/html-estudiante",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "reports/axe-results-estudiante.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.60.0",
+    "workers": 6,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "grupos-estudiante.accessibility.spec.ts",
+      "file": "grupos-estudiante.accessibility.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Listado de grupos — Estudiante",
+          "file": "grupos-estudiante.accessibility.spec.ts",
+          "line": 41,
+          "column": 6,
+          "specs": [
+            {
+              "title": "la página \"Mis grupos\" no tiene violaciones bloqueantes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2628,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "\n── Violaciones en: Mis grupos — vista Estudiante ──\n[MINOR] aria-allowed-role: Ensure role attribute has an appropriate value for the element\n  → <aside id=\"sidebar-nav\" class=\"sidebar-wrapper bg-white border-end\" role=\"navigation\" aria-label=\"Menú principal\">\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:03.505Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-911728c8c69f18b6865a",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 42,
+              "column": 7
+            },
+            {
+              "title": "el badge de rol \"Estudiante\" es accesible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2048,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:06.284Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-731b10702b5495a8907d",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 50,
+              "column": 7
+            },
+            {
+              "title": "las tarjetas de grupo muestran código y cantidad de miembros de forma accesible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2545,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:08.352Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-b435333a1ce1fb746ef9",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 63,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Ingresar a grupo por código",
+          "file": "grupos-estudiante.accessibility.spec.ts",
+          "line": 77,
+          "column": 6,
+          "specs": [
+            {
+              "title": "el modal \"Ingresar a grupo\" no tiene violaciones bloqueantes",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2464,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [
+                        {
+                          "text": "\n── Violaciones en: Modal — Ingresar a grupo ──\n[MINOR] aria-allowed-role: Ensure role attribute has an appropriate value for the element\n  → <aside id=\"sidebar-nav\" class=\"sidebar-wrapper bg-white border-end\" role=\"navigation\" aria-label=\"Menú principal\">\n\n[MODERATE] heading-order: Ensure the order of headings is semantically correct\n  → <h5 class=\"modal-title\" id=\"joinGroupModalLabel\">\n          Ingresar a grupo\n        </h5>\n"
+                        }
+                      ],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:10.910Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-6e5a0484b5aa894204ff",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 92,
+              "column": 7
+            },
+            {
+              "title": "el campo \"Código del grupo\" tiene label visible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2160,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:13.392Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-9ea75b49ed0d6c12fe0f",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 98,
+              "column": 7
+            },
+            {
+              "title": "el botón \"Ingresar\" tiene nombre accesible",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1762,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Ingresar' })\nExpected: visible\nError: strict mode violation: getByRole('button', { name: 'Ingresar' }) resolved to 2 elements:\n    1) <button data-bs-toggle=\"modal\" class=\"btn btn-success\" data-bs-target=\"#joinGroupModal\">…</button> aka getByRole('button', { name: ' Ingresar a grupo' })\n    2) <button type=\"submit\" form=\"joinGroupForm\" class=\"btn btn-success\">↵          Ingresar↵        </button> aka getByRole('button', { name: 'Ingresar', exact: true })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Ingresar' })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Ingresar' })\nExpected: visible\nError: strict mode violation: getByRole('button', { name: 'Ingresar' }) resolved to 2 elements:\n    1) <button data-bs-toggle=\"modal\" class=\"btn btn-success\" data-bs-target=\"#joinGroupModal\">…</button> aka getByRole('button', { name: ' Ingresar a grupo' })\n    2) <button type=\"submit\" form=\"joinGroupForm\" class=\"btn btn-success\">↵          Ingresar↵        </button> aka getByRole('button', { name: 'Ingresar', exact: true })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Ingresar' })\u001b[22m\n\n    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:110:23",
+                        "location": {
+                          "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                          "column": 23,
+                          "line": 110
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 108 |\u001b[39m   test(\u001b[32m'el botón \"Ingresar\" tiene nombre accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 109 |\u001b[39m     \u001b[36mconst\u001b[39m btn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Ingresar'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m     \u001b[36mawait\u001b[39m expect(btn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m     \u001b[36mconst\u001b[39m violations \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m getViolations(\n \u001b[90m 113 |\u001b[39m       \u001b[36mnew\u001b[39m \u001b[33mAxeBuilder\u001b[39m({ page })\u001b[33m.\u001b[39mwithTags([\u001b[32m'wcag2aa'\u001b[39m])\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                            "column": 23,
+                            "line": 110
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Ingresar' })\nExpected: visible\nError: strict mode violation: getByRole('button', { name: 'Ingresar' }) resolved to 2 elements:\n    1) <button data-bs-toggle=\"modal\" class=\"btn btn-success\" data-bs-target=\"#joinGroupModal\">…</button> aka getByRole('button', { name: ' Ingresar a grupo' })\n    2) <button type=\"submit\" form=\"joinGroupForm\" class=\"btn btn-success\">↵          Ingresar↵        </button> aka getByRole('button', { name: 'Ingresar', exact: true })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Ingresar' })\u001b[22m\n\n\n\u001b[0m \u001b[90m 108 |\u001b[39m   test(\u001b[32m'el botón \"Ingresar\" tiene nombre accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 109 |\u001b[39m     \u001b[36mconst\u001b[39m btn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Ingresar'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m     \u001b[36mawait\u001b[39m expect(btn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m     \u001b[36mconst\u001b[39m violations \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m getViolations(\n \u001b[90m 113 |\u001b[39m       \u001b[36mnew\u001b[39m \u001b[33mAxeBuilder\u001b[39m({ page })\u001b[33m.\u001b[39mwithTags([\u001b[32m'wcag2aa'\u001b[39m])\u001b[0m\n\u001b[2m    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:110:23\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:15.570Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-246c2-esar-tiene-nombre-accesible-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-246c2-esar-tiene-nombre-accesible-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-246c2-esar-tiene-nombre-accesible-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                        "column": 23,
+                        "line": 110
+                      }
+                    },
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1948,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Ingresar' })\nExpected: visible\nError: strict mode violation: getByRole('button', { name: 'Ingresar' }) resolved to 2 elements:\n    1) <button data-bs-toggle=\"modal\" class=\"btn btn-success\" data-bs-target=\"#joinGroupModal\">…</button> aka getByRole('button', { name: ' Ingresar a grupo' })\n    2) <button type=\"submit\" form=\"joinGroupForm\" class=\"btn btn-success\">↵          Ingresar↵        </button> aka getByRole('button', { name: 'Ingresar', exact: true })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Ingresar' })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Ingresar' })\nExpected: visible\nError: strict mode violation: getByRole('button', { name: 'Ingresar' }) resolved to 2 elements:\n    1) <button data-bs-toggle=\"modal\" class=\"btn btn-success\" data-bs-target=\"#joinGroupModal\">…</button> aka getByRole('button', { name: ' Ingresar a grupo' })\n    2) <button type=\"submit\" form=\"joinGroupForm\" class=\"btn btn-success\">↵          Ingresar↵        </button> aka getByRole('button', { name: 'Ingresar', exact: true })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Ingresar' })\u001b[22m\n\n    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:110:23",
+                        "location": {
+                          "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                          "column": 23,
+                          "line": 110
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 108 |\u001b[39m   test(\u001b[32m'el botón \"Ingresar\" tiene nombre accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 109 |\u001b[39m     \u001b[36mconst\u001b[39m btn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Ingresar'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m     \u001b[36mawait\u001b[39m expect(btn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m     \u001b[36mconst\u001b[39m violations \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m getViolations(\n \u001b[90m 113 |\u001b[39m       \u001b[36mnew\u001b[39m \u001b[33mAxeBuilder\u001b[39m({ page })\u001b[33m.\u001b[39mwithTags([\u001b[32m'wcag2aa'\u001b[39m])\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                            "column": 23,
+                            "line": 110
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m(\u001b[22m\u001b[2m)\u001b[22m failed\n\nLocator: getByRole('button', { name: 'Ingresar' })\nExpected: visible\nError: strict mode violation: getByRole('button', { name: 'Ingresar' }) resolved to 2 elements:\n    1) <button data-bs-toggle=\"modal\" class=\"btn btn-success\" data-bs-target=\"#joinGroupModal\">…</button> aka getByRole('button', { name: ' Ingresar a grupo' })\n    2) <button type=\"submit\" form=\"joinGroupForm\" class=\"btn btn-success\">↵          Ingresar↵        </button> aka getByRole('button', { name: 'Ingresar', exact: true })\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('button', { name: 'Ingresar' })\u001b[22m\n\n\n\u001b[0m \u001b[90m 108 |\u001b[39m   test(\u001b[32m'el botón \"Ingresar\" tiene nombre accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\n \u001b[90m 109 |\u001b[39m     \u001b[36mconst\u001b[39m btn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Ingresar'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 110 |\u001b[39m     \u001b[36mawait\u001b[39m expect(btn)\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                       \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 111 |\u001b[39m\n \u001b[90m 112 |\u001b[39m     \u001b[36mconst\u001b[39m violations \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m getViolations(\n \u001b[90m 113 |\u001b[39m       \u001b[36mnew\u001b[39m \u001b[33mAxeBuilder\u001b[39m({ page })\u001b[33m.\u001b[39mwithTags([\u001b[32m'wcag2aa'\u001b[39m])\u001b[0m\n\u001b[2m    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:110:23\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-06-12T07:18:18.156Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-246c2-esar-tiene-nombre-accesible-chromium-retry1\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-246c2-esar-tiene-nombre-accesible-chromium-retry1\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-246c2-esar-tiene-nombre-accesible-chromium-retry1\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                        "column": 23,
+                        "line": 110
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "3d164a154be940b72852-fac828d18d813b619ff9",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "código inválido muestra error accesible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 6119,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:21.077Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-181cf4b3db0ff9f937f8",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 118,
+              "column": 7
+            },
+            {
+              "title": "el botón \"Cancelar\" cierra el modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2601,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:27.364Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-55187fbf48cfc1d86980",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 142,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Vista de grupo unido — Estudiante",
+          "file": "grupos-estudiante.accessibility.spec.ts",
+          "line": 156,
+          "column": 6,
+          "specs": [
+            {
+              "title": "la tarjeta del grupo NO muestra opciones de administración (⋮)",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1507,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:165:19",
+                        "location": {
+                          "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                          "column": 19,
+                          "line": 165
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 163 |\u001b[39m     \u001b[36mconst\u001b[39m opcionesBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/opciones del grupo/i\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 164 |\u001b[39m     \u001b[36mconst\u001b[39m count \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m opcionesBtn\u001b[33m.\u001b[39mcount()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 165 |\u001b[39m     expect(count)\u001b[33m.\u001b[39mtoBe(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 166 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 167 |\u001b[39m\n \u001b[90m 168 |\u001b[39m   test(\u001b[32m'la tarjeta del grupo muestra el código de acceso de forma accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                            "column": 19,
+                            "line": 165
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n\u001b[0m \u001b[90m 163 |\u001b[39m     \u001b[36mconst\u001b[39m opcionesBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/opciones del grupo/i\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 164 |\u001b[39m     \u001b[36mconst\u001b[39m count \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m opcionesBtn\u001b[33m.\u001b[39mcount()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 165 |\u001b[39m     expect(count)\u001b[33m.\u001b[39mtoBe(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 166 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 167 |\u001b[39m\n \u001b[90m 168 |\u001b[39m   test(\u001b[32m'la tarjeta del grupo muestra el código de acceso de forma accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:165:19\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:29.980Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-34c8a-ciones-de-administración-⋮--chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-34c8a-ciones-de-administración-⋮--chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-34c8a-ciones-de-administración-⋮--chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                        "column": 19,
+                        "line": 165
+                      }
+                    },
+                    {
+                      "workerIndex": 3,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 1606,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:165:19",
+                        "location": {
+                          "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                          "column": 19,
+                          "line": 165
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 163 |\u001b[39m     \u001b[36mconst\u001b[39m opcionesBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/opciones del grupo/i\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 164 |\u001b[39m     \u001b[36mconst\u001b[39m count \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m opcionesBtn\u001b[33m.\u001b[39mcount()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 165 |\u001b[39m     expect(count)\u001b[33m.\u001b[39mtoBe(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 166 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 167 |\u001b[39m\n \u001b[90m 168 |\u001b[39m   test(\u001b[32m'la tarjeta del grupo muestra el código de acceso de forma accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                            "column": 19,
+                            "line": 165
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m0\u001b[39m\nReceived: \u001b[31m1\u001b[39m\n\n\u001b[0m \u001b[90m 163 |\u001b[39m     \u001b[36mconst\u001b[39m opcionesBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/opciones del grupo/i\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 164 |\u001b[39m     \u001b[36mconst\u001b[39m count \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m opcionesBtn\u001b[33m.\u001b[39mcount()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 165 |\u001b[39m     expect(count)\u001b[33m.\u001b[39mtoBe(\u001b[35m0\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 166 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 167 |\u001b[39m\n \u001b[90m 168 |\u001b[39m   test(\u001b[32m'la tarjeta del grupo muestra el código de acceso de forma accesible'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ authenticatedPage\u001b[33m:\u001b[39m page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts:165:19\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 1,
+                      "startTime": "2026-06-12T07:18:32.312Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-34c8a-ciones-de-administración-⋮--chromium-retry1\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-34c8a-ciones-de-administración-⋮--chromium-retry1\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\test-results\\grupos-estudiante.accessib-34c8a-ciones-de-administración-⋮--chromium-retry1\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\User\\Desktop\\QA\\Testotron-QA\\evidencia-pruebas\\pruebas-usabilidad\\tests\\grupos-estudiante.accessibility.spec.ts",
+                        "column": 19,
+                        "line": 165
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "3d164a154be940b72852-5192497cc9e208b608aa",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 157,
+              "column": 7
+            },
+            {
+              "title": "la tarjeta del grupo muestra el código de acceso de forma accesible",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2374,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:34.870Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-37dc933212eb0652034f",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 168,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Navegación por teclado — Estudiante",
+          "file": "grupos-estudiante.accessibility.spec.ts",
+          "line": 182,
+          "column": 6,
+          "specs": [
+            {
+              "title": "todos los elementos interactivos son alcanzables con Tab",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1984,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:37.397Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-e5b6b755e02d9343ee69",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 183,
+              "column": 7
+            },
+            {
+              "title": "no hay trampas de foco en el modal \"Ingresar a grupo\"",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2069,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-06-12T07:18:39.401Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "3d164a154be940b72852-a74d5eefd597f6bfe1a5",
+              "file": "grupos-estudiante.accessibility.spec.ts",
+              "line": 195,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-06-12T07:18:02.516Z",
+    "duration": 39077.263999999996,
+    "expected": 10,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}
