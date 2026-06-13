@@ -293,72 +293,7 @@ test.describe('Expulsión de miembro', () => {
   });
 });
 
-// ─── 8. Ingresar a grupo por código (rol Estudiante) ─────────────────────────
-/*test.describe('Ingresar a grupo por código', () => {
-  test.beforeEach(async ({ authenticatedPage: page }) => {
-    await page.goto(GRUPOS_URL);
-    await page.waitForLoadState('networkidle');
-    // Botón "Ingresar a grupo" — visible solo para rol Estudiante
-    const btn = page.getByRole('button', { name: /ingresar a grupo/i });
-    const count = await btn.count();
-    if (count > 0) {
-      await btn.click();
-      await page.waitForSelector('text=Ingresar a grupo', { state: 'visible' });
-    } else {
-      test.skip(); // el usuario actual es Profesor, no tiene este botón
-    }
-  });
-
-  test('el modal "Ingresar a grupo" no tiene violaciones bloqueantes', async ({ authenticatedPage: page }) => {
-    const violations = await scanPage(page, 'Modal — Ingresar a grupo');
-    expect(blocking(violations)).toEqual([]);
-  });
-
-  test('el campo "Código del grupo" tiene label visible', async ({ authenticatedPage: page }) => {
-    const label = page.getByText('Código del grupo');
-    await expect(label).toBeVisible();
-
-    const violations = await getViolations(
-      new AxeBuilder({ page }).withTags(['wcag2aa'])
-    );
-    expect(violations.filter((v: Result) => v.id === 'label')).toEqual([]);
-  });
-
-  test('el botón "Ingresar" tiene nombre accesible', async ({ authenticatedPage: page }) => {
-    const btn = page.getByRole('button', { name: 'Ingresar' });
-    await expect(btn).toBeVisible();
-
-    const violations = await getViolations(
-      new AxeBuilder({ page }).withTags(['wcag2aa'])
-    );
-    expect(violations.filter((v: Result) => v.id === 'button-name')).toEqual([]);
-  });
-
-  test('código inválido muestra error accesible', async ({ authenticatedPage: page }) => {
-    await page.locator('input').first().fill('CODIGO-INVALIDO-000');
-    await page.getByRole('button', { name: 'Ingresar' }).click();
-
-    await page.waitForSelector('[role="alert"], [aria-live]', {
-      state: 'visible', timeout: 3000,
-    }).catch(() => {});
-
-    const violations = await getViolations(
-      new AxeBuilder({ page }).withTags(['wcag2aa'])
-    );
-    expect(violations.filter((v: Result) =>
-      ['aria-live-region-filler', 'aria-required-attr'].includes(v.id)
-    )).toEqual([]);
-  });
-
-  test('el botón "Cancelar" cierra el modal', async ({ authenticatedPage: page }) => {
-    await page.getByRole('button', { name: 'Cancelar' }).click();
-    await page.waitForSelector('text=Ingresar a grupo', { state: 'hidden' }).catch(() => {});
-    const focusedTag = await page.evaluate(() => document.activeElement?.tagName);
-    expect(['BUTTON', 'A', 'INPUT', 'BODY']).toContain(focusedTag);
-  });
-});*/
-
-// ─── 9. Navegación por teclado ────────────────────────────────────────────────
+// ─── 8. Navegación por teclado ────────────────────────────────────────────────
 test.describe('Navegación por teclado', () => {
   test('todos los elementos interactivos son alcanzables con Tab', async ({ authenticatedPage: page }) => {
     await page.goto(GRUPOS_URL);
