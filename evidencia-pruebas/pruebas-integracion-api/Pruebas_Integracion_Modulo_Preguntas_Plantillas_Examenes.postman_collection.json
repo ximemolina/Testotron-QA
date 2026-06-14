@@ -1,0 +1,901 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    "name": "Pruebas de Integración del Módulo de Preguntas, Plantillas y Exámenes - Ciclo de Vida Completo",
+    "description": "Pruebas de integración para el módulo de preguntas, plantillas y exámenes que simulan un ciclo completo:\n1. El docente inicia sesión\n2. El docente crea una pregunta en el banco de preguntas\n3. El docente crea una plantilla utilizando esa pregunta\n4. El docente consulta la plantilla\n5. El docente actualiza parcialmente la plantilla (DEF-QUES-002)\n6. El docente genera un examen desde la plantilla (DEF-QUES-005)\n7. El docente crea un examen directamente con una pregunta importada\n8. El docente intenta publicar el examen sin due_at\n9. El docente publica el examen con un due_at válido\n10. El docente edita el examen publicado (reemplazo de snapshot)\n11. El docente actualiza una pregunta cambiando su tipo sin ajustar metadata (DEF-QUES-006)\n12. El docente cierra el examen sin validación previa (DEF-QUES-003)\n13. El docente duplica el examen",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43666731"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "teacher_email",
+      "value": "teacher@test.com"
+    },
+    {
+      "key": "teacher_password",
+      "value": "pass"
+    },
+    {
+      "key": "teacher_token",
+      "value": ""
+    },
+    {
+      "key": "question_id",
+      "value": ""
+    },
+    {
+      "key": "template_id",
+      "value": ""
+    },
+    {
+      "key": "test_code",
+      "value": ""
+    },
+    {
+      "key": "generated_test_code",
+      "value": ""
+    },
+    {
+      "key": "duplicated_test_code",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Configuración de autenticación",
+      "item": [
+        {
+          "name": "1. Iniciar sesión como docente",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Inicio de sesión del docente exitoso\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "var loginData = pm.response.json();",
+                  "pm.collectionVariables.set(\"teacher_token\", loginData.token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{teacher_email}}\",\n    \"password\": \"{{teacher_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pruebas del ciclo de vida de preguntas, plantillas y exámenes",
+      "item": [
+        {
+          "name": "1. El docente crea una pregunta en el banco",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Pregunta creada exitosamente\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().question.id).to.exist;",
+                  "});",
+                  "",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set(\"question_id\", data.question.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"question\": \"¿Cuál es la capital de Costa Rica?\",\n    \"type\": \"multiple_choice\",\n    \"metadata\": { \"options\": [\"San José\", \"Heredia\", \"Alajuela\", \"Cartago\"] },\n    \"correct_answer\": \"San José\",\n    \"difficulty\": \"easy\",\n    \"category\": \"geografia\",\n    \"is_public\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/questions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "2. El docente crea una plantilla con la pregunta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Plantilla creada exitosamente\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(201);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().template_id).to.exist;",
+                  "});",
+                  "",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set(\"template_id\", data.template_id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Plantilla de Geografía\",\n    \"description\": \"Plantilla reutilizable para exámenes cortos de geografía\",\n    \"instructions\": \"Responda todas las preguntas\",\n    \"time_limit_minutes\": 30,\n    \"questions\": [\n        { \"question_id\": {{question_id}}, \"pts\": 2 }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/templates",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "3. El docente consulta la plantilla",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Plantilla obtenida con la pregunta asociada\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    var template = pm.response.json().template;",
+                  "    pm.expect(template.id).to.exist;",
+                  "    pm.expect(template.questions.length).to.be.above(0);",
+                  "    pm.expect(template.questions[0].question_id).to.equal(parseInt(pm.collectionVariables.get(\"question_id\")));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/templates/{{template_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates",
+                "{{template_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. El docente actualiza parcialmente la plantilla (DEF-QUES-002)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Actualización parcial reportada como exitosa\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().updated).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Plantilla de Geografía (actualizada)\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/templates/{{template_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates",
+                "{{template_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4.2. Verificar que descripción y tiempo límite se perdieron (DEF-QUES-002)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Defecto DEF-QUES-002: campos no enviados quedan en NULL\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    var template = pm.response.json().template;",
+                  "    pm.expect(template.title).to.equal(\"Plantilla de Geografía (actualizada)\");",
+                  "    // Se esperaría que description y time_limit_minutes conserven su valor original,",
+                  "    // pero updateTemplate() sin COALESCE los sobrescribe con NULL",
+                  "    pm.expect(template.description).to.be.null;",
+                  "    pm.expect(template.time_limit_minutes).to.be.null;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/templates/{{template_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates",
+                "{{template_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "5. El docente genera un examen desde la plantilla (DEF-QUES-005)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"El uso de la plantilla redirige a la vista de edición del examen\", function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 301, 302]);",
+                  "});",
+                  "",
+                  "// El endpoint responde con un redirect a /teacher/quizzes/edit/:code",
+                  "var location = pm.response.headers.get(\"Location\");",
+                  "if (location) {",
+                  "    var match = location.match(/quizzes\\/edit\\/([A-Za-z0-9]+)/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"generated_test_code\", match[1]);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/templates/{{template_id}}/use",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates",
+                "{{template_id}}",
+                "use"
+              ]
+            }
+          },
+          "response": [],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          }
+        },
+        {
+          "name": "5.2. Verificar que el examen generado contiene todas las preguntas de la plantilla (DEF-QUES-005)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Defecto DEF-QUES-005: no se aplican reglas de selección\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    var test = pm.response.json().test;",
+                  "    // RF-TPL-02 esperaría aplicar selección/cantidad/etiquetas,",
+                  "    // pero el examen generado contiene exactamente las mismas preguntas de la plantilla",
+                  "    pm.expect(test.questions.length).to.equal(1);",
+                  "    pm.expect(test.questions[0].question).to.include(\"capital de Costa Rica\");",
+                  "    pm.expect(test.status).to.equal(\"draft\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{generated_test_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{generated_test_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "6. El docente crea un examen directamente con una pregunta importada",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Examen creado con snapshot de la pregunta importada\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(201);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().code).to.exist;",
+                  "});",
+                  "",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set(\"test_code\", data.code);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Examen corto de Geografía\",\n    \"description\": \"Examen generado a partir del banco de preguntas\",\n    \"status\": \"draft\",\n    \"min_score\": 70,\n    \"questions\": [\n        { \"question_id\": {{question_id}}, \"pts\": 2 }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tests",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "7. El docente intenta publicar el examen sin due_at (caso negativo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"La publicación es rechazada cuando falta due_at\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(400);",
+                  "    pm.expect(pm.response.json().error).to.include(\"fecha límite\");",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}/publish",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}",
+                "publish"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8. El docente define due_at y publica el examen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Examen actualizado con due_at\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Examen corto de Geografía\",\n    \"due_at\": \"2026-12-31T23:59:00.000Z\",\n    \"questions\": [\n        { \"question_id\": {{question_id}}, \"pts\": 2 }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "8.2. El docente publica el examen con due_at válido",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Examen publicado exitosamente\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().published).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}/publish",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}",
+                "publish"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9. El docente edita el examen publicado (reemplazo del snapshot)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Examen publicado editado exitosamente\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Examen corto de Geografía (editado tras publicación)\",\n    \"status\": \"published\",\n    \"due_at\": \"2026-12-31T23:59:00.000Z\",\n    \"questions\": [\n        { \"question_id\": {{question_id}}, \"pts\": 3 }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "9.2. Verificar que el examen se editó sin versionado (RF-TEST-02)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"El examen publicado refleja la edición sin clonado/versionado\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    var test = pm.response.json().test;",
+                  "    pm.expect(test.title).to.equal(\"Examen corto de Geografía (editado tras publicación)\");",
+                  "    pm.expect(test.status).to.equal(\"published\");",
+                  "    pm.expect(test.questions[0].pts).to.equal(3);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "10. El docente actualiza el tipo de pregunta sin ajustar metadata (DEF-QUES-006)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Defecto DEF-QUES-006: actualización aceptada sin validar consistencia\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    var question = pm.response.json().question;",
+                  "    pm.expect(question.type).to.equal(\"true_false\");",
+                  "    // metadata.options sigue presente y es incompatible con el tipo true_false,",
+                  "    // pero el sistema acepta la actualización sin advertencia",
+                  "    pm.expect(question.metadata.options).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"type\": \"true_false\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/questions/{{question_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questions",
+                "{{question_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "11. El docente cierra el examen sin validación previa (DEF-QUES-003)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Defecto DEF-QUES-003: close() no valida estado previo\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().closed).to.equal(true);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}/close",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}",
+                "close"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "11.2. El docente vuelve a cerrar un examen ya cerrado (DEF-QUES-003)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Defecto DEF-QUES-003: cerrar un examen ya cerrado responde 200\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().closed).to.equal(true);",
+                  "    // No hay validación de estado previo: el endpoint responde igual",
+                  "    // sin importar si el examen ya estaba cerrado o ni siquiera existe",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}/close",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}",
+                "close"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "12. El docente duplica el examen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Examen duplicado exitosamente\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().success).to.equal(true);",
+                  "    pm.expect(pm.response.json().code).to.exist;",
+                  "    pm.expect(pm.response.json().code).to.not.equal(pm.collectionVariables.get(\"test_code\"));",
+                  "});",
+                  "",
+                  "var data = pm.response.json();",
+                  "pm.collectionVariables.set(\"duplicated_test_code\", data.code);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code}}/duplicate",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code}}",
+                "duplicate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "12.2. Verificar que el examen duplicado está en borrador con las mismas preguntas",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"El examen duplicado está en borrador y tiene el mismo snapshot de preguntas\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    var test = pm.response.json().test;",
+                  "    pm.expect(test.status).to.equal(\"draft\");",
+                  "    pm.expect(test.title).to.include(\"(Copia)\");",
+                  "    pm.expect(test.questions.length).to.equal(1);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{duplicated_test_code}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{duplicated_test_code}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

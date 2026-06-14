@@ -1,0 +1,702 @@
+{
+  "info": {
+    "_postman_id": "f1e2d3c4-9988-4a1b-8c2d-1a2b3c4d5e6f",
+    "name": "Pruebas de Seguridad del Módulo de Preguntas, Plantillas y Exámenes",
+    "description": "Pruebas de seguridad enfocadas en autenticación, autorización por rol y control de acceso entre usuarios (IDOR/BOLA) para los endpoints de preguntas, plantillas y exámenes.\n\nFlujo:\n0. Registro de Teacher B\n1. Login de Teacher A, Teacher B y Student\n2. TC-SEG-QUES-001: GET /api/questions sin token\n3. TC-SEG-QUES-002: POST /api/questions con token de student\n4. Teacher A crea pregunta, plantilla y examen (setup para casos cruzados)\n5. TC-SEG-QUES-003: Teacher B edita pregunta de Teacher A\n6. TC-SEG-QUES-004: Teacher B edita plantilla de Teacher A\n7. TC-SEG-QUES-005: Teacher B elimina plantilla de Teacher A\n8. TC-SEG-QUES-006: Teacher B edita examen de Teacher A (control positivo)\n9. TC-SEG-QUES-007: Teacher A crea pregunta con payload XSS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43666731"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "teacher_a_email",
+      "value": "teacher@test.com"
+    },
+    {
+      "key": "teacher_a_password",
+      "value": "pass"
+    },
+    {
+      "key": "teacher_a_token",
+      "value": ""
+    },
+    {
+      "key": "teacher_b_email",
+      "value": "teacher2@test.com"
+    },
+    {
+      "key": "teacher_b_password",
+      "value": "pass123"
+    },
+    {
+      "key": "teacher_b_token",
+      "value": ""
+    },
+    {
+      "key": "student_email",
+      "value": "student1@test.com"
+    },
+    {
+      "key": "student_password",
+      "value": "pass"
+    },
+    {
+      "key": "student_token",
+      "value": ""
+    },
+    {
+      "key": "question_id_a",
+      "value": ""
+    },
+    {
+      "key": "template_id_a",
+      "value": ""
+    },
+    {
+      "key": "test_code_a",
+      "value": ""
+    },
+    {
+      "key": "xss_question_id",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Configuración inicial",
+      "item": [
+        {
+          "name": "0.1. Registrar Teacher B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Teacher B registrado o ya existente\", function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([201, 409]);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Teacher B\",\n    \"email\": \"{{teacher_b_email}}\",\n    \"password\": \"{{teacher_b_password}}\",\n    \"role\": \"teacher\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "0.2. Login Teacher A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login Teacher A exitoso\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"teacher_a_token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{teacher_a_email}}\",\n    \"password\": \"{{teacher_a_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "0.3. Login Teacher B",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login Teacher B exitoso\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"teacher_b_token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{teacher_b_email}}\",\n    \"password\": \"{{teacher_b_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "0.4. Login Student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Login Student exitoso\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().token).to.exist;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"student_token\", pm.response.json().token);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{student_email}}\",\n    \"password\": \"{{student_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pruebas de Seguridad - Preguntas, Plantillas y Exámenes",
+      "item": [
+        {
+          "name": "TC-SEG-QUES-001. GET /api/questions sin autenticación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Acceso sin token es rechazado (401)\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/questions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questions"
+              ]
+            }
+          },
+          "response": [],
+          "protocolProfileBehavior": {
+            "disableCookies": true
+          }
+        },
+        {
+          "name": "TC-SEG-QUES-002. POST /api/questions con rol student",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Creación de pregunta por estudiante es rechazada (403)\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{student_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"question\": \"Intento de estudiante\",\n    \"type\": \"short_answer\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/questions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup. Teacher A crea pregunta",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Pregunta de Teacher A creada\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().question.id).to.exist;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"question_id_a\", pm.response.json().question.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_a_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"question\": \"Pregunta propiedad de Teacher A\",\n    \"type\": \"short_answer\",\n    \"correct_answer\": \"respuesta\",\n    \"difficulty\": \"easy\",\n    \"is_public\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/questions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup. Teacher A crea plantilla",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Plantilla de Teacher A creada\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(201);",
+                  "    pm.expect(pm.response.json().template_id).to.exist;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"template_id_a\", pm.response.json().template_id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_a_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Plantilla propiedad de Teacher A\",\n    \"description\": \"Plantilla privada de Teacher A\",\n    \"questions\": [\n        { \"question_id\": {{question_id_a}}, \"pts\": 1 }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/templates",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Setup. Teacher A crea examen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Examen de Teacher A creado\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(201);",
+                  "    pm.expect(pm.response.json().code).to.exist;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"test_code_a\", pm.response.json().code);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_a_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Examen propiedad de Teacher A\",\n    \"status\": \"draft\",\n    \"questions\": [\n        { \"question_id\": {{question_id_a}}, \"pts\": 1 }\n    ]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tests",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-SEG-QUES-003. Teacher B edita pregunta de Teacher A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Resultado de edición cruzada de pregunta\", function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 403]);",
+                  "    if (pm.response.code === 200) {",
+                  "        console.warn('Posible defecto: Teacher B pudo editar una pregunta de Teacher A');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_b_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"question\": \"Pregunta modificada por Teacher B\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/questions/{{question_id_a}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questions",
+                "{{question_id_a}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-SEG-QUES-004. Teacher B edita plantilla de Teacher A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Resultado de edición cruzada de plantilla\", function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 403, 500]);",
+                  "    if (pm.response.code === 200) {",
+                  "        console.warn('Posible defecto: Teacher B pudo editar una plantilla de Teacher A');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_b_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Plantilla modificada por Teacher B\",\n    \"description\": \"hackeada\",\n    \"instructions\": \"\",\n    \"time_limit_minutes\": 10\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/templates/{{template_id_a}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates",
+                "{{template_id_a}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-SEG-QUES-005. Teacher B elimina plantilla de Teacher A",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Resultado de eliminación cruzada de plantilla\", function() {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 403]);",
+                  "    if (pm.response.code === 200 && pm.response.json().deleted) {",
+                  "        console.warn('Posible defecto: Teacher B pudo eliminar una plantilla de Teacher A');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_b_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/templates/{{template_id_a}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "templates",
+                "{{template_id_a}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-SEG-QUES-006. Teacher B edita examen de Teacher A (control positivo)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Edición cruzada de examen es rechazada (403)\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(403);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_b_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"title\": \"Examen modificado por Teacher B\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tests/{{test_code_a}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tests",
+                "{{test_code_a}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "TC-SEG-QUES-007. Crear pregunta con payload XSS",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Pregunta con payload XSS creada (para inspección manual en UI)\", function() {",
+                  "    pm.expect(pm.response.code).to.equal(200);",
+                  "    pm.expect(pm.response.json().question.id).to.exist;",
+                  "});",
+                  "",
+                  "pm.collectionVariables.set(\"xss_question_id\", pm.response.json().question.id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{teacher_a_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"question\": \"<script>alert(1)</script>\",\n    \"type\": \"short_answer\",\n    \"correct_answer\": \"x\",\n    \"is_public\": 0\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/questions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "questions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "protocolProfileBehavior": {
+    "disableCookies": true
+  }
+}
